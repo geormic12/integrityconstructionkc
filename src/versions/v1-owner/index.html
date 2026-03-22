@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integrity Construction KC — Talk to the Owner</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #2c2c2c;
+    background: #faf9f6;
+    padding-top: 28px;
+    line-height: 1.7;
+  }
+
+  /* Version bar */
+  .version-bar {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: #111; color: #888; font-size: 0.7rem;
+    padding: 0.4rem 1rem; display: flex; gap: 1rem; z-index: 9999;
+    font-family: monospace;
+  }
+  .version-bar a { color: #888; text-decoration: none; }
+  .version-bar a:hover { color: #ccc; }
+  .version-bar a.active { color: #fff; }
+
+  /* Header */
+  .site-header {
+    background: #3a5a40;
+    padding: 1rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .site-header .logo-area {
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .site-header .logo-area img {
+    width: 44px; height: 44px; border-radius: 8px; object-fit: cover;
+  }
+  .site-header .logo-area span {
+    font-family: 'DM Serif Display', serif;
+    color: #fff; font-size: 1.2rem;
+  }
+  .site-header .header-phone a {
+    color: #d4e7d0; text-decoration: none; font-weight: 600;
+    font-size: 0.95rem;
+  }
+  .site-header .header-phone a:hover { color: #fff; }
+
+  /* Hero */
+  .hero {
+    display: flex; align-items: center; justify-content: center;
+    gap: 4rem; padding: 5rem 2rem 4rem;
+    max-width: 1100px; margin: 0 auto;
+    flex-wrap: wrap;
+  }
+  .hero-portrait {
+    flex: 0 0 340px;
+  }
+  .hero-portrait img {
+    width: 340px; height: 420px; object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(58,90,64,0.2);
+  }
+  .hero-text {
+    flex: 1; min-width: 300px;
+  }
+  .hero-text h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.6rem; color: #2d4a32; margin-bottom: 0.25rem;
+    line-height: 1.2;
+  }
+  .hero-text .subtitle {
+    font-size: 1rem; color: #6b8f71; font-weight: 500;
+    margin-bottom: 1.5rem;
+  }
+  .hero-text .intro {
+    font-size: 1.25rem; color: #444; margin-bottom: 1.5rem;
+    font-weight: 400;
+  }
+  .hero-text .story {
+    font-size: 1rem; color: #555; margin-bottom: 1.5rem;
+  }
+  .hero-text .integrity-quote {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.2rem; color: #3a5a40;
+    border-left: 4px solid #a3c4a8;
+    padding: 1rem 1.25rem;
+    background: #eef5ef;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 2rem;
+  }
+
+  /* Contact buttons */
+  .contact-buttons {
+    display: flex; gap: 1rem; flex-wrap: wrap;
+  }
+  .btn-call, .btn-email {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    padding: 1rem 2rem; border-radius: 10px;
+    text-decoration: none; font-weight: 700; font-size: 1.05rem;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .btn-call {
+    background: #3a5a40; color: #fff;
+  }
+  .btn-email {
+    background: #fff; color: #3a5a40;
+    border: 2px solid #3a5a40;
+  }
+  .btn-call:hover, .btn-email:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(58,90,64,0.2);
+  }
+
+  /* Values strip */
+  .values-strip {
+    background: #3a5a40; color: #fff;
+    text-align: center; padding: 2.5rem 2rem;
+  }
+  .values-strip h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem; margin-bottom: 1rem;
+  }
+  .values-pills {
+    display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;
+  }
+  .values-pills span {
+    background: rgba(255,255,255,0.15);
+    padding: 0.5rem 1.5rem; border-radius: 100px;
+    font-weight: 600; font-size: 1.1rem;
+    letter-spacing: 0.03em;
+  }
+
+  /* Services */
+  .services {
+    max-width: 1100px; margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+  .services h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem; color: #2d4a32;
+    text-align: center; margin-bottom: 2.5rem;
+  }
+  .services-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+  .service-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    transition: transform 0.15s;
+  }
+  .service-card:hover { transform: translateY(-4px); }
+  .service-card .icon { font-size: 2.2rem; margin-bottom: 0.75rem; }
+  .service-card h3 {
+    font-size: 1.05rem; color: #2d4a32; margin-bottom: 0.4rem;
+  }
+  .service-card p {
+    font-size: 0.85rem; color: #777;
+  }
+
+  /* Project photos */
+  .projects {
+    background: #f0ede6; padding: 4rem 2rem;
+  }
+  .projects h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem; color: #2d4a32;
+    text-align: center; margin-bottom: 2rem;
+  }
+  .projects-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.25rem; max-width: 1100px; margin: 0 auto;
+  }
+  .projects-grid img {
+    width: 100%; height: 240px; object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+
+  /* Testimonials */
+  .testimonials {
+    max-width: 900px; margin: 0 auto;
+    padding: 4rem 2rem;
+  }
+  .testimonials h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem; color: #2d4a32;
+    text-align: center; margin-bottom: 2.5rem;
+  }
+  .testimonial {
+    background: #fff; border-radius: 12px;
+    padding: 2rem; margin-bottom: 1.25rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+    border-left: 4px solid #a3c4a8;
+  }
+  .testimonial p {
+    font-size: 1rem; color: #444; font-style: italic;
+    margin-bottom: 0.5rem;
+  }
+  .testimonial .author {
+    font-weight: 600; color: #3a5a40; font-style: normal;
+    font-size: 0.9rem;
+  }
+  .stars { color: #d4a017; letter-spacing: 2px; font-size: 0.9rem; }
+
+  /* CTA bottom */
+  .bottom-cta {
+    background: #2d4a32; color: #fff;
+    text-align: center; padding: 4rem 2rem;
+  }
+  .bottom-cta h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem; margin-bottom: 0.75rem;
+  }
+  .bottom-cta p {
+    font-size: 1.1rem; opacity: 0.85; margin-bottom: 2rem;
+  }
+  .bottom-cta .btn-call {
+    background: #fff; color: #2d4a32;
+    font-size: 1.2rem; padding: 1.1rem 2.5rem;
+  }
+
+  /* Footer */
+  footer {
+    background: #1a1a1a; color: #888;
+    text-align: center; padding: 2rem;
+    font-size: 0.85rem;
+  }
+  footer a { color: #a3c4a8; text-decoration: none; }
+
+  @media (max-width: 768px) {
+    .hero { flex-direction: column; gap: 2rem; padding: 3rem 1.5rem; text-align: center; }
+    .hero-portrait { flex: 0 0 auto; }
+    .hero-portrait img { width: 260px; height: 320px; }
+    .hero-text h1 { font-size: 2rem; }
+    .contact-buttons { justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="version-bar">
+  <a href="../">All</a>
+  <a href="../v1-owner/" class="active">V1</a> <a href="../v2-instant-price/">V2</a> <a href="../v3-bigbutton/">V3</a>
+  <a href="../v4-portfolio/">V4</a> <a href="../v5-trust/">V5</a> <a href="../v6-family/">V6</a>
+  <a href="../v7-neighborhood/">V7</a> <a href="../v8-minimal/">V8</a> <a href="../v9-chat/">V9</a>
+  <a href="../v10-before-after/">V10</a>
+</nav>
+
+<header class="site-header">
+  <div class="logo-area">
+    <img src="../../images/logo.jpeg" alt="Integrity Construction KC">
+    <span>Integrity Construction KC</span>
+  </div>
+  <div class="header-phone">
+    <a href="tel:9709783236">(970) 978-3236</a>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-portrait">
+    <img src="../../images/jordan-portrait.png" alt="Jordan Thompson, Owner of Integrity Construction KC">
+  </div>
+  <div class="hero-text">
+    <h1>Jordan Thompson</h1>
+    <div class="subtitle">Owner, Integrity Construction KC</div>
+    <p class="intro">I'm Jordan, and I'm the one you'll talk to about your project.</p>
+    <p class="story">
+      I'm a Kansas City guy — musician, husband, father of two (with one more on the way). I started Integrity Construction about three years ago because I believe in doing things right. When you call, you get me. When I give you a quote, that's the price. When I set a date, we show up.
+    </p>
+    <div class="integrity-quote">
+      "When I say integrity, I mean something simple: we do what we say we will do, by when we say we're going to do it."
+    </div>
+    <div class="contact-buttons">
+      <a href="tel:9709783236" class="btn-call">Call Me Directly: (970) 978-3236</a>
+      <a href="mailto:jordan@integrityconstructionkc.com" class="btn-email">Email Me</a>
+    </div>
+  </div>
+</section>
+
+<div class="values-strip">
+  <h2>What We Stand For</h2>
+  <div class="values-pills">
+    <span>Trust</span>
+    <span>Honor</span>
+    <span>Integrity</span>
+  </div>
+</div>
+
+<section class="services">
+  <h2>What We Build</h2>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="icon">&#x1f6e1;&#xfe0f;</div>
+      <h3>Wood Privacy</h3>
+      <p>Full privacy fencing built to last</p>
+    </div>
+    <div class="service-card">
+      <div class="icon">&#x2699;&#xfe0f;</div>
+      <h3>Wrought Iron</h3>
+      <p>Elegant, durable iron fencing</p>
+    </div>
+    <div class="service-card">
+      <div class="icon">&#x26d3;&#xfe0f;</div>
+      <h3>Chain Link</h3>
+      <p>Affordable, reliable security</p>
+    </div>
+    <div class="service-card">
+      <div class="icon">&#x1fab5;</div>
+      <h3>Spaced Picket</h3>
+      <p>Classic curb appeal</p>
+    </div>
+    <div class="service-card">
+      <div class="icon">&#x2728;</div>
+      <h3>Specialty</h3>
+      <p>Custom designs &amp; unique builds</p>
+    </div>
+    <div class="service-card">
+      <div class="icon">&#x1f527;</div>
+      <h3>Repairs</h3>
+      <p>Storm damage &amp; wear fixes</p>
+    </div>
+  </div>
+</section>
+
+<section class="projects">
+  <h2>Recent Projects</h2>
+  <div class="projects-grid">
+    <img src="../../images/backyard-fence.jpeg" alt="Backyard privacy fence">
+    <img src="../../images/gallery-01.jpg" alt="Fence project">
+    <img src="../../images/gallery-03.jpg" alt="Fence project">
+    <img src="../../images/wrought-iron.jpeg" alt="Wrought iron fence">
+    <img src="../../images/gallery-05.jpg" alt="Fence project">
+    <img src="../../images/gallery-07.jpg" alt="Fence project">
+  </div>
+</section>
+
+<section class="testimonials">
+  <h2>What Our Customers Say</h2>
+
+  <div class="testimonial">
+    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+    <p>"Jordan was honest from the start. He showed up when he said he would, finished on time, and the fence looks amazing. You can tell he takes pride in his work."</p>
+    <div class="author">— Sarah M., Overland Park</div>
+  </div>
+
+  <div class="testimonial">
+    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+    <p>"We got three quotes and Jordan's was the most fair. But more than that, he actually called us back the same day. That says a lot."</p>
+    <div class="author">— David R., Lee's Summit</div>
+  </div>
+
+  <div class="testimonial">
+    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+    <p>"Our old fence blew down in a storm. Jordan came out the next morning, gave us a quote, and had the new fence up within the week. Incredible."</p>
+    <div class="author">— The Martinez Family, Raytown</div>
+  </div>
+
+  <div class="testimonial">
+    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+    <p>"I appreciate a man who does what he says. Jordan is that guy. The crew was respectful, cleaned up every day, and the fence is beautiful."</p>
+    <div class="author">— Tom K., Blue Springs</div>
+  </div>
+
+  <div class="testimonial">
+    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+    <p>"Best fencing experience we've had. Professional, on time, great communication. We'll be recommending Integrity to everyone."</p>
+    <div class="author">— Jennifer L., Prairie Village</div>
+  </div>
+
+  <div class="testimonial">
+    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+    <p>"Jordan is the real deal. No games, no surprise charges. Just honest work and a great fence. Our backyard finally feels complete."</p>
+    <div class="author">— Marcus & Angela W., Independence</div>
+  </div>
+
+  <div class="testimonial">
+    <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+    <p>"From the first phone call to the final walkthrough, Jordan made us feel like family. That's rare in this business."</p>
+    <div class="author">— Cynthia P., Gladstone</div>
+  </div>
+</section>
+
+<section class="bottom-cta">
+  <h2>Ready to Talk About Your Fence?</h2>
+  <p>No pressure, no sales pitch. Just a conversation with the owner.</p>
+  <a href="tel:9709783236" class="btn-call">Call Jordan: (970) 978-3236</a>
+</section>
+
+<footer>
+  <p>&copy; 2026 Integrity Construction KC &middot; Kansas City, MO &middot; <a href="mailto:jordan@integrityconstructionkc.com">jordan@integrityconstructionkc.com</a></p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integrity Construction KC — Kansas City's Fence Builder</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    padding-top: 28px;
+    line-height: 1.7;
+  }
+
+  /* Version bar */
+  .version-bar {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: #111; color: #888; font-size: 0.7rem;
+    padding: 0.4rem 1rem; display: flex; gap: 1rem; z-index: 9999;
+    font-family: monospace;
+  }
+  .version-bar a { color: #888; text-decoration: none; }
+  .version-bar a:hover { color: #ccc; }
+  .version-bar a.active { color: #fff; }
+
+  /* Header */
+  .site-header {
+    background: #004B8D;
+    padding: 1rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo-area { display: flex; align-items: center; gap: 0.75rem; }
+  .logo-area img { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; }
+  .logo-area span {
+    font-family: 'Oswald', sans-serif;
+    color: #fff; font-size: 1.3rem; text-transform: uppercase; letter-spacing: 0.02em;
+  }
+  .header-right { display: flex; align-items: center; gap: 1.5rem; }
+  .header-phone a {
+    color: #fff; text-decoration: none; font-weight: 700; font-size: 1.1rem;
+    letter-spacing: 0.02em;
+  }
+  .header-cta a {
+    background: #C8102E; color: #fff; text-decoration: none;
+    padding: 0.6rem 1.4rem; border-radius: 6px; font-weight: 700;
+    font-size: 0.9rem; transition: background 0.2s;
+  }
+  .header-cta a:hover { background: #a00d24; }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #004B8D 0%, #002d54 60%, #001a33 100%);
+    padding: 5rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 30% 50%, rgba(200,16,46,0.15) 0%, transparent 60%);
+  }
+  .hero-content { position: relative; z-index: 1; max-width: 800px; margin: 0 auto; }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 0.4rem 1.2rem;
+    border-radius: 100px;
+    font-size: 0.8rem;
+    color: #93c5fd;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 600;
+    margin-bottom: 1.5rem;
+  }
+  .hero h1 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 3.5rem;
+    color: #fff;
+    text-transform: uppercase;
+    line-height: 1.1;
+    margin-bottom: 1rem;
+  }
+  .hero h1 .red { color: #C8102E; }
+  .hero p { color: #93c5fd; font-size: 1.15rem; margin-bottom: 2rem; }
+  .hero-phone {
+    display: inline-block;
+    background: #C8102E;
+    color: #fff;
+    padding: 1rem 2.5rem;
+    border-radius: 8px;
+    font-size: 1.5rem;
+    font-weight: 800;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: background 0.2s, transform 0.2s;
+  }
+  .hero-phone:hover { background: #a00d24; transform: translateY(-2px); }
+  .hero-phone-label {
+    display: block; font-size: 0.75rem; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.1em;
+    margin-bottom: 0.25rem; opacity: 0.8;
+  }
+
+  /* Service area */
+  .service-area {
+    background: #f8fafc;
+    padding: 3.5rem 2rem;
+    border-bottom: 3px solid #004B8D;
+  }
+  .service-area h2 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.8rem;
+    text-transform: uppercase;
+    text-align: center;
+    color: #004B8D;
+    margin-bottom: 0.5rem;
+  }
+  .service-area .subtitle {
+    text-align: center; color: #6b7280; margin-bottom: 2rem; font-size: 0.95rem;
+  }
+  .area-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+    max-width: 900px;
+    margin: 0 auto;
+    list-style: none;
+  }
+  .area-grid li {
+    display: flex; align-items: center; gap: 0.6rem;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    padding: 0.85rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: #1a1a1a;
+  }
+  .area-grid li::before {
+    content: "\2713";
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 24px; height: 24px;
+    background: #004B8D; color: #fff;
+    border-radius: 50%; font-size: 0.7rem; font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  /* Testimonials by city */
+  .city-reviews {
+    padding: 4rem 2rem;
+    max-width: 1000px;
+    margin: 0 auto;
+  }
+  .city-reviews > h2 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 2rem;
+    text-transform: uppercase;
+    text-align: center;
+    color: #004B8D;
+    margin-bottom: 2.5rem;
+  }
+  .city-group { margin-bottom: 2.5rem; }
+  .city-group h3 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    color: #C8102E;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 2px solid #fee2e2;
+    display: flex; align-items: center; gap: 0.5rem;
+  }
+  .city-group h3::before {
+    content: "\1F4CD";
+    font-size: 1rem;
+  }
+  .city-review-card {
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+    border-left: 4px solid #004B8D;
+    padding: 1.25rem 1.5rem;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 0.75rem;
+  }
+  .city-review-stars { color: #f59e0b; font-size: 0.9rem; margin-bottom: 0.5rem; }
+  .city-review-text { font-size: 0.95rem; color: #374151; margin-bottom: 0.5rem; }
+  .city-review-author { font-weight: 700; font-size: 0.85rem; color: #004B8D; }
+
+  /* Owner section */
+  .neighbor-section {
+    background: #004B8D;
+    padding: 4rem 2rem;
+  }
+  .neighbor-inner {
+    max-width: 900px; margin: 0 auto;
+    display: flex; gap: 2.5rem; align-items: center;
+    flex-wrap: wrap;
+  }
+  .neighbor-photo {
+    width: 200px; height: 200px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid #93c5fd;
+    flex-shrink: 0;
+  }
+  .neighbor-text { flex: 1; min-width: 280px; color: #fff; }
+  .neighbor-text h2 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.8rem; text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .neighbor-text p { color: #93c5fd; font-size: 1rem; margin-bottom: 0.75rem; }
+  .neighbor-text .ethos {
+    font-style: italic; color: #fff; font-size: 1.1rem;
+    border-left: 3px solid #C8102E;
+    padding-left: 1rem;
+    margin-top: 1rem;
+  }
+
+  /* Fence types */
+  .fence-types {
+    padding: 4rem 2rem;
+    background: #fff;
+  }
+  .fence-types h2 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.8rem; text-transform: uppercase;
+    text-align: center; color: #004B8D;
+    margin-bottom: 2rem;
+  }
+  .fence-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+    max-width: 900px;
+    margin: 0 auto;
+    list-style: none;
+  }
+  .fence-card {
+    background: #f8fafc;
+    border: 2px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 1.5rem 1.25rem;
+    text-align: center;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .fence-card:hover { border-color: #004B8D; box-shadow: 0 4px 12px rgba(0,75,141,0.1); }
+  .fence-card-icon { font-size: 2rem; margin-bottom: 0.5rem; }
+  .fence-card-name {
+    font-weight: 700; font-size: 0.95rem; color: #1a1a1a;
+  }
+
+  /* Big phone CTA */
+  .phone-cta {
+    background: #C8102E;
+    padding: 3.5rem 2rem;
+    text-align: center;
+  }
+  .phone-cta h2 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 2rem; color: #fff;
+    text-transform: uppercase;
+    margin-bottom: 0.75rem;
+  }
+  .phone-cta p { color: #fca5a5; font-size: 1rem; margin-bottom: 1.5rem; }
+  .phone-cta .big-phone {
+    display: inline-block;
+    color: #fff;
+    font-size: 2.5rem;
+    font-weight: 800;
+    text-decoration: none;
+    letter-spacing: 0.02em;
+    transition: transform 0.2s;
+  }
+  .phone-cta .big-phone:hover { transform: scale(1.05); }
+  .phone-cta .or-email {
+    display: block; margin-top: 1rem;
+    color: #fca5a5; font-size: 0.9rem;
+  }
+  .phone-cta .or-email a { color: #fff; }
+
+  /* Gallery */
+  .gallery-strip {
+    display: flex; overflow: hidden;
+  }
+  .gallery-strip img {
+    width: calc(100% / 6); height: 160px;
+    object-fit: cover; display: block;
+  }
+
+  /* Footer */
+  .site-footer {
+    background: #001a33;
+    color: #6b8ab0;
+    text-align: center;
+    padding: 2rem;
+    font-size: 0.85rem;
+  }
+  .site-footer a { color: #6b8ab0; }
+  .site-footer .pride {
+    font-family: 'Oswald', sans-serif;
+    text-transform: uppercase;
+    font-size: 0.95rem;
+    color: #93c5fd;
+    letter-spacing: 0.05em;
+    margin-bottom: 0.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .hero h1 { font-size: 2.2rem; }
+    .hero-phone { font-size: 1.2rem; padding: 0.85rem 2rem; }
+    .area-grid { grid-template-columns: 1fr 1fr; }
+    .neighbor-inner { flex-direction: column; text-align: center; }
+    .neighbor-photo { margin: 0 auto; width: 160px; height: 160px; }
+    .neighbor-text .ethos { text-align: left; }
+    .fence-cards { grid-template-columns: 1fr 1fr; }
+    .phone-cta .big-phone { font-size: 1.8rem; }
+    .gallery-strip img { width: calc(100% / 3); }
+    .site-header { flex-direction: column; gap: 0.75rem; }
+    .header-right { flex-direction: column; gap: 0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="version-bar">
+  <a href="../">All</a>
+  <a href="../v1-owner/">V1</a> <a href="../v2-instant-price/">V2</a> <a href="../v3-bigbutton/">V3</a>
+  <a href="../v4-portfolio/">V4</a> <a href="../v5-trust/">V5</a> <a href="../v6-family/">V6</a>
+  <a href="../v7-neighborhood/" class="active">V7</a> <a href="../v8-minimal/">V8</a> <a href="../v9-chat/">V9</a>
+  <a href="../v10-before-after/">V10</a>
+</nav>
+
+<header class="site-header">
+  <div class="logo-area">
+    <img src="../../images/logo.jpeg" alt="Integrity Construction KC">
+    <span>Integrity Construction KC</span>
+  </div>
+  <div class="header-right">
+    <div class="header-phone"><a href="tel:9709783236">(970) 978-3236</a></div>
+    <div class="header-cta"><a href="mailto:jordan@integrityconstructionkc.com">Free Quote</a></div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-badge">Proudly Local Since 2023</div>
+    <h1>Kansas City's <span class="red">Fence Builder</span></h1>
+    <p>Your neighbor's fence guy. Serving the KC metro with trust, craftsmanship, and a handshake you can count on.</p>
+    <a href="tel:9709783236" class="hero-phone">
+      <span class="hero-phone-label">Call Jordan Direct</span>
+      (970) 978-3236
+    </a>
+  </div>
+</section>
+
+<section class="service-area">
+  <h2>We're in Your Neighborhood</h2>
+  <p class="subtitle">Fencing the KC metro &mdash; one backyard at a time</p>
+  <ul class="area-grid">
+    <li>Kansas City, MO</li>
+    <li>Overland Park</li>
+    <li>Raytown</li>
+    <li>Raymore</li>
+    <li>Olathe</li>
+    <li>Lee's Summit</li>
+    <li>Shawnee</li>
+    <li>Lenexa</li>
+  </ul>
+</section>
+
+<section class="city-reviews">
+  <h2>What Your Neighbors Are Saying</h2>
+
+  <div class="city-group">
+    <h3>What Kansas City Says</h3>
+    <div class="city-review-card">
+      <div class="city-review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="city-review-text">"Jordan, and team did amazing work getting fences installed on two properties this week. They were extremely professional, attentive to the details, and mindful of creating an end result that matched met all of my expectations. Great experience!"</p>
+      <div class="city-review-author">Matt B.</div>
+    </div>
+    <div class="city-review-card">
+      <div class="city-review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="city-review-text">"Jordan's team was efficient, respectful, and finished the project ahead of time! I have recommended them to several friends & will continue to do so. Very happy with the outcome & service."</p>
+      <div class="city-review-author">Caitlin B.</div>
+    </div>
+    <div class="city-review-card">
+      <div class="city-review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="city-review-text">"Jordan is a great Craftsman of fences. He quickly remedied the spacing issue we had with the gate. Great company!"</p>
+      <div class="city-review-author">Jeremy H.</div>
+    </div>
+    <div class="city-review-card">
+      <div class="city-review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="city-review-text">"Jordan and Omar are excellent in communicating with the house owner to install the steel fence in the best possible manner. Very professional and courteous."</p>
+      <div class="city-review-author">Hao Z.</div>
+    </div>
+  </div>
+
+  <div class="city-group">
+    <h3>What Raytown Says</h3>
+    <div class="city-review-card">
+      <div class="city-review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="city-review-text">"Jordan created my dream backyard."</p>
+      <div class="city-review-author">Michael</div>
+    </div>
+  </div>
+
+  <div class="city-group">
+    <h3>What Overland Park Says</h3>
+    <div class="city-review-card">
+      <div class="city-review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="city-review-text">"Professional and they got it done when they said they would. Highly Recommend."</p>
+      <div class="city-review-author">James</div>
+    </div>
+  </div>
+
+  <div class="city-group">
+    <h3>What Raymore Says</h3>
+    <div class="city-review-card">
+      <div class="city-review-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="city-review-text">"My deck looks awesome!!! So much better."</p>
+      <div class="city-review-author">Jill</div>
+    </div>
+  </div>
+</section>
+
+<section class="neighbor-section">
+  <div class="neighbor-inner">
+    <img src="../../images/jordan-portrait.png" alt="Jordan Thompson" class="neighbor-photo">
+    <div class="neighbor-text">
+      <h2>Your Neighbor's Fence Guy</h2>
+      <p>Jordan Thompson started Integrity Construction KC in 2023. He lives here, works here, and raises his family here. When you hire Jordan, you're hiring a KC local who takes pride in this city.</p>
+      <p>He's not a franchise. He's not a call center. He's the guy who answers his own phone, shows up on time, and builds your fence like he's building it for his own family.</p>
+      <div class="ethos">"We do what we say we will do, by when we say we're going to do it."</div>
+    </div>
+  </div>
+</section>
+
+<section class="fence-types">
+  <h2>What We Build</h2>
+  <ul class="fence-cards">
+    <li class="fence-card">
+      <div class="fence-card-icon">&#x1F6E1;</div>
+      <div class="fence-card-name">Wood Privacy</div>
+    </li>
+    <li class="fence-card">
+      <div class="fence-card-icon">&#x2699;</div>
+      <div class="fence-card-name">Wrought Iron</div>
+    </li>
+    <li class="fence-card">
+      <div class="fence-card-icon">&#x26D3;</div>
+      <div class="fence-card-name">Chain Link</div>
+    </li>
+    <li class="fence-card">
+      <div class="fence-card-icon">&#x1F3DA;</div>
+      <div class="fence-card-name">Spaced Picket</div>
+    </li>
+    <li class="fence-card">
+      <div class="fence-card-icon">&#x2B50;</div>
+      <div class="fence-card-name">Specialty</div>
+    </li>
+    <li class="fence-card">
+      <div class="fence-card-icon">&#x1F527;</div>
+      <div class="fence-card-name">Repairs</div>
+    </li>
+  </ul>
+</section>
+
+<div class="gallery-strip">
+  <img src="../../images/gallery-07.jpg" alt="Fence project">
+  <img src="../../images/gallery-08.jpg" alt="Fence project">
+  <img src="../../images/gallery-09.jpg" alt="Fence project">
+  <img src="../../images/gallery-10.jpg" alt="Fence project">
+  <img src="../../images/gallery-11.jpg" alt="Fence project">
+  <img src="../../images/gallery-12.jpg" alt="Fence project">
+</div>
+
+<section class="phone-cta">
+  <h2>Ready to Talk Fences?</h2>
+  <p>Call Jordan directly. No phone tree. No runaround. Just a KC guy who builds great fences.</p>
+  <a href="tel:9709783236" class="big-phone">(970) 978-3236</a>
+  <span class="or-email">or email <a href="mailto:jordan@integrityconstructionkc.com">jordan@integrityconstructionkc.com</a></span>
+</section>
+
+<footer class="site-footer">
+  <p class="pride">Proudly Serving the KC Metro Since 2023</p>
+  <p>&copy; 2025 Integrity Construction KC &bull; Kansas City, MO</p>
+  <p><a href="mailto:jordan@integrityconstructionkc.com">jordan@integrityconstructionkc.com</a></p>
+</footer>
+
+</body>
+</html>

@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integrity Construction KC — Fences Built Right</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #fff;
+    color: #1a1a1a;
+    padding-top: 28px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* Version bar */
+  .version-bar {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: #111; color: #888;
+    font-size: 0.7rem; padding: 0.4rem 1rem;
+    display: flex; gap: 1rem; z-index: 9999;
+    font-family: monospace;
+  }
+  .version-bar a { color: #888; text-decoration: none; }
+  .version-bar a:hover { color: #ccc; }
+  .version-bar a[href="../v8-minimal/"] { color: #fff; }
+
+  /* Hero section */
+  .hero {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 60px 0;
+  }
+
+  .hero-image {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+  }
+
+  .hero-text {
+    padding: 80px 0 60px;
+    max-width: 680px;
+  }
+
+  h1 {
+    font-weight: 200;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    letter-spacing: -0.03em;
+    line-height: 1.05;
+    color: #000;
+    margin-bottom: 28px;
+  }
+
+  .hero-text p {
+    font-weight: 300;
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: #555;
+    margin-bottom: 48px;
+    max-width: 440px;
+  }
+
+  .cta-button {
+    display: inline-block;
+    padding: 14px 40px;
+    border: 1.5px solid #1a1a1a;
+    color: #1a1a1a;
+    text-decoration: none;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 0.95rem;
+    letter-spacing: 0.02em;
+    transition: all 0.3s ease;
+    background: transparent;
+  }
+
+  .cta-button:hover {
+    background: #1a1a1a;
+    color: #fff;
+  }
+
+  /* Divider */
+  .divider {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 60px;
+  }
+
+  .divider hr {
+    border: none;
+    border-top: 1px solid #e8e8e8;
+  }
+
+  /* Jordan section */
+  .jordan {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 80px 60px 120px;
+    display: flex;
+    align-items: center;
+    gap: 24px;
+  }
+
+  .jordan-photo {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .jordan-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .jordan-name {
+    font-weight: 400;
+    font-size: 0.95rem;
+    color: #1a1a1a;
+  }
+
+  .jordan-phone {
+    font-weight: 300;
+    font-size: 0.9rem;
+    color: #888;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .jordan-phone:hover {
+    color: #1a1a1a;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .hero { padding: 48px 24px 0; }
+    .hero-text { padding: 48px 0 40px; }
+    .hero-text p { margin-bottom: 36px; }
+    .divider { padding: 0 24px; }
+    .jordan { padding: 48px 24px 80px; }
+  }
+
+  @media (max-width: 480px) {
+    .hero { padding: 32px 16px 0; }
+    .hero-text { padding: 36px 0 32px; }
+    .divider { padding: 0 16px; }
+    .jordan { padding: 36px 16px 64px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="version-bar">
+  <a href="../">All</a>
+  <a href="../v1-owner/">V1</a> <a href="../v2-instant-price/">V2</a> <a href="../v3-bigbutton/">V3</a>
+  <a href="../v4-portfolio/">V4</a> <a href="../v5-trust/">V5</a> <a href="../v6-family/">V6</a>
+  <a href="../v7-neighborhood/">V7</a> <a href="../v8-minimal/">V8</a> <a href="../v9-chat/">V9</a>
+  <a href="../v10-before-after/">V10</a>
+</nav>
+
+<section class="hero">
+  <img src="../../images/gallery-05.jpg" alt="Quality fence craftsmanship by Integrity Construction KC" class="hero-image">
+  <div class="hero-text">
+    <h1>Fences Built Right.</h1>
+    <p>Family-owned. Kansas City proud. We build fences that last.</p>
+    <a href="tel:9709783236" class="cta-button">Get Your Quote</a>
+  </div>
+</section>
+
+<div class="divider"><hr></div>
+
+<section class="jordan">
+  <img src="../../images/jordan-portrait.png" alt="Jordan Thompson" class="jordan-photo">
+  <div class="jordan-info">
+    <span class="jordan-name">Jordan Thompson</span>
+    <a href="tel:9709783236" class="jordan-phone">(970) 978-3236</a>
+  </div>
+</section>
+
+</body>
+</html>

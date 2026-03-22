@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integrity Construction KC — Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #e8e8e8;
+    background: #0a0a0a;
+    padding-top: 28px;
+    line-height: 1.6;
+  }
+
+  .version-bar {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: #111; color: #888; font-size: 0.7rem;
+    padding: 0.4rem 1rem; display: flex; gap: 1rem; z-index: 9999;
+    font-family: monospace;
+  }
+  .version-bar a { color: #888; text-decoration: none; }
+  .version-bar a:hover { color: #ccc; }
+  .version-bar a.active { color: #fff; }
+
+  /* Hero — full bleed */
+  .hero {
+    position: relative;
+    width: 100%; height: 85vh;
+    min-height: 500px;
+    overflow: hidden;
+  }
+  .hero img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    filter: brightness(0.55);
+  }
+  .hero-overlay {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 4rem 3rem;
+  }
+  .hero-overlay h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 3.5rem; font-weight: 700;
+    color: #fff; line-height: 1.1;
+    margin-bottom: 0.25rem;
+  }
+  .hero-overlay .tagline {
+    font-size: 1.15rem; color: #c9a84c;
+    font-weight: 400; letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .hero-overlay .logo-mark {
+    position: absolute; top: 2rem; left: 3rem;
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .hero-overlay .logo-mark img {
+    width: 40px; height: 40px; border-radius: 8px;
+    object-fit: cover; filter: none;
+  }
+  .hero-overlay .logo-mark span {
+    color: #fff; font-weight: 500; font-size: 0.9rem;
+    letter-spacing: 0.04em;
+  }
+  .hero-overlay .hero-phone {
+    position: absolute; top: 2rem; right: 3rem;
+    color: #c9a84c; text-decoration: none;
+    font-weight: 500; font-size: 0.9rem;
+  }
+  .hero-overlay .hero-phone:hover { color: #fff; }
+
+  /* Gallery section */
+  .gallery-intro {
+    text-align: center; padding: 4rem 2rem 2rem;
+  }
+  .gallery-intro h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; color: #fff;
+    margin-bottom: 0.5rem;
+  }
+  .gallery-intro p {
+    color: #888; font-size: 0.95rem;
+    max-width: 500px; margin: 0 auto;
+  }
+
+  /* Masonry grid */
+  .masonry {
+    column-count: 3; column-gap: 8px;
+    padding: 0 8px 2rem;
+    max-width: 1400px; margin: 0 auto;
+  }
+  .masonry-item {
+    break-inside: avoid;
+    margin-bottom: 8px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  .masonry-item img {
+    width: 100%; display: block;
+    transition: transform 0.4s ease;
+  }
+  .masonry-item:hover img {
+    transform: scale(1.05);
+  }
+  .masonry-item .overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(transparent 40%, rgba(0,0,0,0.8) 100%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    display: flex; flex-direction: column;
+    justify-content: flex-end;
+    padding: 1.25rem;
+  }
+  .masonry-item:hover .overlay { opacity: 1; }
+  .masonry-item .overlay .type {
+    color: #c9a84c; font-size: 0.75rem;
+    font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.1em; margin-bottom: 0.15rem;
+  }
+  .masonry-item .overlay .loc {
+    color: #ccc; font-size: 0.85rem;
+  }
+
+  /* Vary masonry item heights for visual interest */
+  .masonry-item:nth-child(3n+1) img { aspect-ratio: 3/4; object-fit: cover; }
+  .masonry-item:nth-child(3n+2) img { aspect-ratio: 4/3; object-fit: cover; }
+  .masonry-item:nth-child(3n) img { aspect-ratio: 1/1; object-fit: cover; }
+
+  /* About section */
+  .about {
+    max-width: 900px; margin: 0 auto;
+    padding: 4rem 2rem;
+    display: flex; gap: 3rem; align-items: center;
+    flex-wrap: wrap;
+  }
+  .about img {
+    width: 240px; height: 300px;
+    object-fit: cover; border-radius: 8px;
+    flex-shrink: 0;
+  }
+  .about-text { flex: 1; min-width: 280px; }
+  .about-text h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2rem; color: #fff;
+    margin-bottom: 0.5rem;
+  }
+  .about-text .subtitle {
+    color: #c9a84c; font-size: 0.85rem;
+    font-weight: 500; text-transform: uppercase;
+    letter-spacing: 0.1em; margin-bottom: 1rem;
+  }
+  .about-text p {
+    color: #aaa; font-size: 0.95rem;
+    margin-bottom: 1rem;
+  }
+  .about-text .quote {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem; color: #c9a84c;
+    font-style: italic;
+    border-left: 2px solid #c9a84c;
+    padding-left: 1.25rem;
+    margin: 1.5rem 0;
+  }
+
+  /* Services strip */
+  .services-strip {
+    border-top: 1px solid #222; border-bottom: 1px solid #222;
+    padding: 2.5rem 2rem;
+    display: flex; justify-content: center; gap: 3rem;
+    flex-wrap: wrap;
+    max-width: 1000px; margin: 0 auto;
+  }
+  .service-item { text-align: center; }
+  .service-item .s-icon { font-size: 1.6rem; margin-bottom: 0.3rem; }
+  .service-item .s-name {
+    font-weight: 600; color: #fff; font-size: 0.85rem;
+  }
+  .service-item .s-sub {
+    color: #666; font-size: 0.75rem;
+  }
+
+  /* CTA */
+  .cta {
+    text-align: center;
+    padding: 5rem 2rem;
+  }
+  .cta h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.4rem; color: #fff;
+    margin-bottom: 0.5rem;
+  }
+  .cta p {
+    color: #888; font-size: 1rem;
+    margin-bottom: 2rem;
+  }
+  .cta-buttons {
+    display: flex; gap: 1rem; justify-content: center;
+    flex-wrap: wrap;
+  }
+  .cta-btn {
+    display: inline-block;
+    padding: 1rem 2.5rem;
+    border-radius: 6px;
+    text-decoration: none;
+    font-weight: 600; font-size: 1rem;
+    transition: transform 0.12s, box-shadow 0.12s;
+  }
+  .cta-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+  }
+  .cta-btn-primary {
+    background: #c9a84c; color: #0a0a0a;
+  }
+  .cta-btn-secondary {
+    background: transparent; color: #c9a84c;
+    border: 1px solid #c9a84c;
+  }
+
+  footer {
+    border-top: 1px solid #1a1a1a;
+    text-align: center; padding: 2rem;
+    font-size: 0.8rem; color: #555;
+  }
+  footer a { color: #c9a84c; text-decoration: none; }
+
+  @media (max-width: 900px) {
+    .masonry { column-count: 2; }
+    .hero-overlay h1 { font-size: 2.5rem; }
+    .hero-overlay { padding: 3rem 2rem; }
+    .hero-overlay .logo-mark { left: 2rem; }
+    .hero-overlay .hero-phone { right: 2rem; }
+  }
+  @media (max-width: 600px) {
+    .masonry { column-count: 1; }
+    .hero { height: 70vh; }
+    .hero-overlay h1 { font-size: 2rem; }
+    .about { flex-direction: column; text-align: center; }
+    .about img { width: 200px; height: 250px; }
+    .services-strip { gap: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="version-bar">
+  <a href="../">All</a>
+  <a href="../v1-owner/">V1</a> <a href="../v2-instant-price/">V2</a> <a href="../v3-bigbutton/">V3</a>
+  <a href="../v4-portfolio/" class="active">V4</a> <a href="../v5-trust/">V5</a> <a href="../v6-family/">V6</a>
+  <a href="../v7-neighborhood/">V7</a> <a href="../v8-minimal/">V8</a> <a href="../v9-chat/">V9</a>
+  <a href="../v10-before-after/">V10</a>
+</nav>
+
+<section class="hero">
+  <img src="../../images/backyard-fence.jpeg" alt="Premium fence installation by Integrity Construction KC">
+  <div class="hero-overlay">
+    <div class="logo-mark">
+      <img src="../../images/logo.jpeg" alt="Logo">
+      <span>Integrity Construction KC</span>
+    </div>
+    <a href="tel:9709783236" class="hero-phone">(970) 978-3236</a>
+    <h1>Integrity<br>Construction KC</h1>
+    <div class="tagline">Kansas City Fencing</div>
+  </div>
+</section>
+
+<div class="gallery-intro">
+  <h2>Our Work</h2>
+  <p>Every fence tells a story. Here are some of ours.</p>
+</div>
+
+<div class="masonry">
+  <div class="masonry-item">
+    <img src="../../images/gallery-01.jpg" alt="Fence project">
+    <div class="overlay">
+      <div class="type">Wood Privacy</div>
+      <div class="loc">Overland Park, KS</div>
+    </div>
+  </div>
+  <div class="masonry-item">
+    <img src="../../images/gallery-02.jpg" alt="Fence project">
+    <div class="overlay">
+      <div class="type">Privacy Fence</div>
+      <div class="loc">Lee's Summit, MO</div>
+    </div>
+  </div>
+  <div class="masonry-item">
+    <img src="../../images/wrought-iron.jpeg" alt="Wrought iron fence">
+    <div class="overlay">
+      <div class="type">Wrought Iron</div>
+      <div class="loc">Prairie Village, KS</div>
+    </div>
+  </div>
+  <div class="masonry-item">
+    <img src="../../images/gallery-03.jpg" alt="Fence project">
+    <div class="overlay">
+      <div class="type">Wood Privacy</div>
+      <div class="loc">Blue Springs, MO</div>
+    </div>
+  </div>
+  <div class="masonry-item">
+    <img src="../../images/gallery-04.jpg" alt="Fence project">
+    <div class="overlay">
+      <div class="type">Spaced Picket</div>
+      <div class="loc">Raytown, MO</div>
+    </div>
+  </div>
+  <div class="masonry-item">
+    <img src="../../images/chain-link.jpg" alt="Chain link fence">
+    <div class="overlay">
+      <div class="type">Chain Link</div>
+      <div class="loc">Independence, MO</div>
+    </div>
+  </div>
+  <div class="masonry-item">
+    <img src="../../images/gallery-05.jpg" alt="Fence project">
+    <div class="overlay">
+      <div class="type">Privacy Fence</div>
+      <div class="loc">Gladstone, MO</div>
+    </div>
+  </div>
+  <div class="masonry-item">
+    <img src="../../images/gallery-06.jpg" alt="Fence project">
+    <div class="overlay">
+      <div class="type">Custom Build</div>
+      <div class="loc">Kansas City, MO</div>
+    </div>
+  </div>
+  <div class="masonry-item">
+    <img src="../../images/gallery-07.jpg" alt="Fence project">
+    <div class="overlay">
+      <div class="type">Wood Privacy</div>
+      <div class="loc">Shawnee, KS</div>
+    </div>
+  </div>
+  <div class="masonry-item">
+    <img src="../../images/gallery-08.jpg" alt="Fence project">
+    <div class="overlay">
+      <div class="type">Privacy Fence</div>
+      <div class="loc">Liberty, MO</div>
+    </div>
+  </div>
+  <div class="masonry-item">
+    <img src="../../images/gallery-09.jpg" alt="Fence project">
+    <div class="overlay">
+      <div class="type">Specialty</div>
+      <div class="loc">Olathe, KS</div>
+    </div>
+  </div>
+  <div class="masonry-item">
+    <img src="../../images/gallery-10.jpg" alt="Fence project">
+    <div class="overlay">
+      <div class="type">Wood Privacy</div>
+      <div class="loc">Lenexa, KS</div>
+    </div>
+  </div>
+  <div class="masonry-item">
+    <img src="../../images/gallery-11.jpg" alt="Fence project">
+    <div class="overlay">
+      <div class="type">Custom Design</div>
+      <div class="loc">Leawood, KS</div>
+    </div>
+  </div>
+  <div class="masonry-item">
+    <img src="../../images/gallery-12.jpg" alt="Fence project">
+    <div class="overlay">
+      <div class="type">Privacy Fence</div>
+      <div class="loc">Grandview, MO</div>
+    </div>
+  </div>
+</div>
+
+<div class="services-strip">
+  <div class="service-item">
+    <div class="s-icon">&#x1f6e1;&#xfe0f;</div>
+    <div class="s-name">Wood Privacy</div>
+    <div class="s-sub">Our specialty</div>
+  </div>
+  <div class="service-item">
+    <div class="s-icon">&#x2699;&#xfe0f;</div>
+    <div class="s-name">Wrought Iron</div>
+    <div class="s-sub">Elegant &amp; durable</div>
+  </div>
+  <div class="service-item">
+    <div class="s-icon">&#x26d3;&#xfe0f;</div>
+    <div class="s-name">Chain Link</div>
+    <div class="s-sub">Reliable security</div>
+  </div>
+  <div class="service-item">
+    <div class="s-icon">&#x1fab5;</div>
+    <div class="s-name">Picket</div>
+    <div class="s-sub">Classic charm</div>
+  </div>
+  <div class="service-item">
+    <div class="s-icon">&#x2728;</div>
+    <div class="s-name">Specialty</div>
+    <div class="s-sub">Custom builds</div>
+  </div>
+  <div class="service-item">
+    <div class="s-icon">&#x1f527;</div>
+    <div class="s-name">Repairs</div>
+    <div class="s-sub">Fast turnaround</div>
+  </div>
+</div>
+
+<section class="about">
+  <img src="../../images/jordan-portrait.png" alt="Jordan Thompson, Owner">
+  <div class="about-text">
+    <h2>Jordan Thompson</h2>
+    <div class="subtitle">Owner &amp; Builder</div>
+    <p>Every project you see here was built by my crew and me. I'm a KC musician, family man, and someone who believes the work should speak for itself.</p>
+    <p>When you hire Integrity Construction, you're hiring a team that takes pride in every board, every post, every detail.</p>
+    <div class="quote">"We do what we say we will do, by when we say we're going to do it."</div>
+  </div>
+</section>
+
+<section class="cta">
+  <h2>See something you like?</h2>
+  <p>Let's build yours.</p>
+  <div class="cta-buttons">
+    <a href="tel:9709783236" class="cta-btn cta-btn-primary">Call Jordan: (970) 978-3236</a>
+    <a href="mailto:jordan@integrityconstructionkc.com" class="cta-btn cta-btn-secondary">Email for a Quote</a>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 Integrity Construction KC &middot; Kansas City, MO &middot; <a href="mailto:jordan@integrityconstructionkc.com">jordan@integrityconstructionkc.com</a></p>
+</footer>
+
+</body>
+</html>

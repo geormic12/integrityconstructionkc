@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integrity Construction KC — Chat with Jordan</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #f0f0f0;
+    padding-top: 28px;
+    -webkit-font-smoothing: antialiased;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Version bar */
+  .version-bar {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: #111; color: #888;
+    font-size: 0.7rem; padding: 0.4rem 1rem;
+    display: flex; gap: 1rem; z-index: 9999;
+    font-family: monospace;
+  }
+  .version-bar a { color: #888; text-decoration: none; }
+  .version-bar a:hover { color: #ccc; }
+  .version-bar a[href="../v9-chat/"] { color: #fff; }
+
+  /* Chat container */
+  .chat-wrapper {
+    max-width: 520px;
+    width: 100%;
+    margin: 0 auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #fff;
+    min-height: calc(100vh - 28px);
+  }
+
+  /* Chat header */
+  .chat-header {
+    background: #fafafa;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 28px;
+    z-index: 100;
+  }
+
+  .header-avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    position: relative;
+  }
+
+  .avatar-wrapper {
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .online-dot {
+    width: 12px;
+    height: 12px;
+    background: #34C759;
+    border-radius: 50%;
+    border: 2.5px solid #fafafa;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+  }
+
+  .header-info h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  .header-status {
+    font-size: 0.75rem;
+    color: #34C759;
+    font-weight: 500;
+  }
+
+  /* Chat body */
+  .chat-body {
+    flex: 1;
+    padding: 20px 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  /* Message bubbles */
+  .message {
+    max-width: 80%;
+    padding: 10px 16px;
+    border-radius: 18px;
+    font-size: 0.92rem;
+    line-height: 1.45;
+    animation: fadeInUp 0.35s ease-out;
+    position: relative;
+  }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .message.jordan {
+    background: #2D5F3F;
+    color: #fff;
+    align-self: flex-start;
+    border-bottom-left-radius: 6px;
+  }
+
+  .message.jordan + .message.jordan {
+    border-top-left-radius: 6px;
+  }
+
+  .message.user {
+    background: #007AFF;
+    color: #fff;
+    align-self: flex-end;
+    border-bottom-right-radius: 6px;
+  }
+
+  .message.user + .message.user {
+    border-top-right-radius: 6px;
+  }
+
+  /* Timestamp */
+  .timestamp {
+    text-align: center;
+    font-size: 0.7rem;
+    color: #999;
+    margin: 12px 0 8px;
+    font-weight: 500;
+  }
+
+  /* Jordan avatar on messages */
+  .jordan-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    align-self: flex-start;
+    max-width: 85%;
+  }
+
+  .jordan-row .mini-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .jordan-row .message {
+    max-width: 100%;
+  }
+
+  .jordan-row.no-avatar .mini-avatar {
+    visibility: hidden;
+  }
+
+  /* Response buttons */
+  .response-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 8px 0 4px;
+    align-self: flex-end;
+    max-width: 90%;
+    justify-content: flex-end;
+    animation: fadeInUp 0.35s ease-out;
+  }
+
+  .response-btn {
+    padding: 9px 18px;
+    border-radius: 20px;
+    border: 1.5px solid #007AFF;
+    background: transparent;
+    color: #007AFF;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .response-btn:hover {
+    background: #007AFF;
+    color: #fff;
+  }
+
+  .response-btn:active {
+    transform: scale(0.96);
+  }
+
+  .response-btn.selected {
+    background: #007AFF;
+    color: #fff;
+    pointer-events: none;
+  }
+
+  /* Typing indicator */
+  .typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 12px 18px;
+    background: #2D5F3F;
+    border-radius: 18px;
+    border-bottom-left-radius: 6px;
+    align-self: flex-start;
+    animation: fadeInUp 0.3s ease-out;
+  }
+
+  .typing-indicator span {
+    width: 7px;
+    height: 7px;
+    background: rgba(255,255,255,0.5);
+    border-radius: 50%;
+    animation: typingBounce 1.4s infinite ease-in-out;
+  }
+
+  .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes typingBounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.4; }
+    30% { transform: translateY(-4px); opacity: 1; }
+  }
+
+  /* Input area */
+  .input-area {
+    padding: 12px 16px 24px;
+    background: #fafafa;
+    border-top: 1px solid #e5e5e5;
+    display: none;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .input-area.visible {
+    display: flex;
+  }
+
+  .input-area input {
+    flex: 1;
+    padding: 12px 18px;
+    border-radius: 24px;
+    border: 1px solid #ddd;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    background: #fff;
+    transition: border-color 0.2s;
+  }
+
+  .input-area input:focus {
+    border-color: #007AFF;
+  }
+
+  .input-area button {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: #007AFF;
+    color: #fff;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+
+  .input-area button:hover {
+    background: #0062d1;
+  }
+
+  /* Gallery image in chat */
+  .chat-image {
+    max-width: 75%;
+    border-radius: 14px;
+    align-self: flex-start;
+    margin: 4px 0;
+    animation: fadeInUp 0.35s ease-out;
+  }
+
+  /* Footer */
+  .chat-footer {
+    background: #1a1a1a;
+    color: #999;
+    padding: 24px 20px;
+    text-align: center;
+    font-size: 0.78rem;
+    line-height: 1.8;
+  }
+
+  .chat-footer a {
+    color: #ccc;
+    text-decoration: none;
+  }
+
+  .chat-footer a:hover {
+    color: #fff;
+  }
+
+  .chat-footer .company-name {
+    font-weight: 600;
+    color: #fff;
+    font-size: 0.85rem;
+    margin-bottom: 4px;
+  }
+
+  /* Phone input specific */
+  .phone-input-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    animation: fadeInUp 0.35s ease-out;
+    align-self: flex-end;
+    max-width: 85%;
+    padding: 4px 0;
+  }
+
+  .phone-input-group input {
+    padding: 10px 16px;
+    border-radius: 20px;
+    border: 1.5px solid #007AFF;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    width: 180px;
+    color: #1a1a1a;
+  }
+
+  .phone-input-group input:focus {
+    box-shadow: 0 0 0 3px rgba(0,122,255,0.15);
+  }
+
+  .phone-input-group button {
+    padding: 10px 20px;
+    border-radius: 20px;
+    border: none;
+    background: #007AFF;
+    color: #fff;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  /* Hidden elements */
+  .hidden { display: none !important; }
+
+  /* Scrollbar */
+  .chat-body::-webkit-scrollbar { width: 4px; }
+  .chat-body::-webkit-scrollbar-track { background: transparent; }
+  .chat-body::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+
+  @media (max-width: 520px) {
+    .chat-wrapper { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="version-bar">
+  <a href="../">All</a>
+  <a href="../v1-owner/">V1</a> <a href="../v2-instant-price/">V2</a> <a href="../v3-bigbutton/">V3</a>
+  <a href="../v4-portfolio/">V4</a> <a href="../v5-trust/">V5</a> <a href="../v6-family/">V6</a>
+  <a href="../v7-neighborhood/">V7</a> <a href="../v8-minimal/">V8</a> <a href="../v9-chat/">V9</a>
+  <a href="../v10-before-after/">V10</a>
+</nav>
+
+<div class="chat-wrapper">
+  <div class="chat-header">
+    <div class="avatar-wrapper">
+      <img src="../../images/jordan-portrait.png" alt="Jordan Thompson" class="header-avatar">
+      <div class="online-dot"></div>
+    </div>
+    <div class="header-info">
+      <h2>Jordan Thompson</h2>
+      <span class="header-status">online</span>
+    </div>
+  </div>
+
+  <div class="chat-body" id="chatBody">
+    <div class="timestamp">Today</div>
+  </div>
+
+  <div class="chat-footer">
+    <div class="company-name">Integrity Construction KC</div>
+    <a href="tel:9709783236">(970) 978-3236</a> &nbsp;&bull;&nbsp;
+    <a href="mailto:jordan@integrityconstructionkc.com">jordan@integrityconstructionkc.com</a><br>
+    Kansas City, MO &nbsp;&bull;&nbsp; Family-owned fencing company
+  </div>
+</div>
+
+<script>
+(function() {
+  const chatBody = document.getElementById('chatBody');
+  const PRICES = {
+    'Wood Privacy': { perFt: 28, label: 'Wood Privacy' },
+    'Chain Link': { perFt: 18, label: 'Chain Link' },
+    'Wrought Iron': { perFt: 35, label: 'Wrought Iron' },
+    'Picket': { perFt: 24, label: 'Spaced Picket' },
+    'Not sure yet': { perFt: 0, label: null }
+  };
+
+  let selectedFence = null;
+  let conversationStep = 0;
+
+  function scrollToBottom() {
+    setTimeout(() => {
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }, 50);
+  }
+
+  function addJordanMessage(text, showAvatar) {
+    const row = document.createElement('div');
+    row.className = 'jordan-row' + (showAvatar ? '' : ' no-avatar');
+
+    const avatar = document.createElement('img');
+    avatar.src = '../../images/jordan-portrait.png';
+    avatar.alt = 'Jordan';
+    avatar.className = 'mini-avatar';
+    row.appendChild(avatar);
+
+    const bubble = document.createElement('div');
+    bubble.className = 'message jordan';
+    bubble.innerHTML = text;
+    row.appendChild(bubble);
+
+    chatBody.appendChild(row);
+    scrollToBottom();
+  }
+
+  function addUserMessage(text) {
+    const bubble = document.createElement('div');
+    bubble.className = 'message user';
+    bubble.textContent = text;
+    chatBody.appendChild(bubble);
+    scrollToBottom();
+  }
+
+  function addImage(src) {
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = 'Fence example';
+    img.className = 'chat-image';
+    chatBody.appendChild(img);
+    scrollToBottom();
+  }
+
+  function showTyping() {
+    const indicator = document.createElement('div');
+    indicator.className = 'typing-indicator';
+    indicator.id = 'typingIndicator';
+    indicator.innerHTML = '<span></span><span></span><span></span>';
+
+    const row = document.createElement('div');
+    row.className = 'jordan-row';
+    row.id = 'typingRow';
+    const avatar = document.createElement('img');
+    avatar.src = '../../images/jordan-portrait.png';
+    avatar.alt = '';
+    avatar.className = 'mini-avatar';
+    row.appendChild(avatar);
+    row.appendChild(indicator);
+    chatBody.appendChild(row);
+    scrollToBottom();
+  }
+
+  function hideTyping() {
+    const row = document.getElementById('typingRow');
+    if (row) row.remove();
+  }
+
+  function addButtons(options, callback) {
+    const container = document.createElement('div');
+    container.className = 'response-options';
+    options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'response-btn';
+      btn.textContent = opt;
+      btn.addEventListener('click', () => {
+        // Disable all buttons in this group
+        container.querySelectorAll('.response-btn').forEach(b => {
+          b.classList.add('selected');
+          b.style.opacity = b === btn ? '1' : '0.4';
+          b.style.pointerEvents = 'none';
+        });
+        btn.classList.add('selected');
+        callback(opt);
+      });
+      container.appendChild(btn);
+    });
+    chatBody.appendChild(container);
+    scrollToBottom();
+  }
+
+  function addFeetInput() {
+    const group = document.createElement('div');
+    group.className = 'phone-input-group';
+    const input = document.createElement('input');
+    input.type = 'number';
+    input.placeholder = 'e.g. 150';
+    input.min = '10';
+    input.max = '2000';
+    const btn = document.createElement('button');
+    btn.textContent = 'Send';
+    btn.addEventListener('click', () => handleFeetInput(input.value, group));
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handleFeetInput(input.value, group);
+    });
+    group.appendChild(input);
+    group.appendChild(btn);
+    chatBody.appendChild(group);
+    scrollToBottom();
+    setTimeout(() => input.focus(), 100);
+  }
+
+  function addPhoneInput() {
+    const group = document.createElement('div');
+    group.className = 'phone-input-group';
+    const input = document.createElement('input');
+    input.type = 'tel';
+    input.placeholder = '(555) 123-4567';
+    const btn = document.createElement('button');
+    btn.textContent = 'Send';
+    btn.addEventListener('click', () => handlePhoneInput(input.value, group));
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') handlePhoneInput(input.value, group);
+    });
+    group.appendChild(input);
+    group.appendChild(btn);
+    chatBody.appendChild(group);
+    scrollToBottom();
+    setTimeout(() => input.focus(), 100);
+  }
+
+  function handleFeetInput(value, group) {
+    const feet = parseInt(value);
+    if (!feet || feet < 10) return;
+
+    group.querySelectorAll('input, button').forEach(el => el.disabled = true);
+    group.style.opacity = '0.5';
+
+    addUserMessage(feet + ' feet');
+
+    const info = PRICES[selectedFence];
+    const estimate = (info.perFt * feet).toLocaleString();
+
+    showTyping();
+    setTimeout(() => {
+      hideTyping();
+      addJordanMessage(
+        `Nice! At $${info.perFt}/ft, that's roughly <strong>$${estimate}</strong> for ${feet} feet of ${info.label} fencing.`,
+        true
+      );
+      setTimeout(() => {
+        addJordanMessage('Want me to come take a look and give you an exact number? No charge for estimates.', false);
+        setTimeout(() => {
+          addButtons(['Yes, call me!', 'Send me a quote', 'Just browsing'], handleFinalChoice);
+        }, 400);
+      }, 800);
+    }, 1200);
+  }
+
+  function handlePhoneInput(value, group) {
+    if (!value || value.length < 7) return;
+
+    group.querySelectorAll('input, button').forEach(el => el.disabled = true);
+    group.style.opacity = '0.5';
+
+    addUserMessage(value);
+
+    showTyping();
+    setTimeout(() => {
+      hideTyping();
+      addJordanMessage("Got it! I'll give you a call soon. Talk to you then! 🤙", true);
+      setTimeout(() => {
+        addJordanMessage(
+          'In the meantime, you can always reach me at <a href="tel:9709783236" style="color:#a8d8b9;text-decoration:underline">(970) 978-3236</a>.',
+          false
+        );
+      }, 800);
+    }, 1000);
+  }
+
+  function handleFenceChoice(choice) {
+    addUserMessage(choice);
+    selectedFence = choice;
+
+    if (choice === 'Not sure yet') {
+      showTyping();
+      setTimeout(() => {
+        hideTyping();
+        addJordanMessage("No worries! We do it all — wood privacy, chain link, wrought iron, picket, and custom work.", true);
+        setTimeout(() => {
+          addJordanMessage('Best thing is to give me a call and I can walk you through the options. Want me to reach out?', false);
+          setTimeout(() => {
+            addButtons(['Yes, call me!', 'Send me a quote', 'Just browsing'], handleFinalChoice);
+          }, 400);
+        }, 800);
+      }, 1200);
+      return;
+    }
+
+    const info = PRICES[choice];
+    const imageMap = {
+      'Wood Privacy': '../../images/backyard-fence.jpeg',
+      'Wrought Iron': '../../images/wrought-iron.jpeg',
+      'Chain Link': '../../images/chain-link.jpg',
+      'Picket': '../../images/gallery-03.jpg'
+    };
+
+    showTyping();
+    setTimeout(() => {
+      hideTyping();
+      addJordanMessage(`Great choice! ${info.label} fencing runs about <strong>$${info.perFt}/ft</strong> installed.`, true);
+
+      setTimeout(() => {
+        if (imageMap[choice]) addImage(imageMap[choice]);
+        setTimeout(() => {
+          addJordanMessage('How many linear feet are we talking? (Best guess is fine!)', false);
+          setTimeout(() => addFeetInput(), 400);
+        }, 600);
+      }, 600);
+    }, 1200);
+  }
+
+  function handleFinalChoice(choice) {
+    addUserMessage(choice);
+
+    if (choice === 'Yes, call me!') {
+      showTyping();
+      setTimeout(() => {
+        hideTyping();
+        addJordanMessage("Awesome! Drop your number and I'll reach out shortly. 👇", true);
+        setTimeout(() => addPhoneInput(), 400);
+      }, 800);
+    } else if (choice === 'Send me a quote') {
+      showTyping();
+      setTimeout(() => {
+        hideTyping();
+        addJordanMessage(
+          'Shoot me an email at <a href="mailto:jordan@integrityconstructionkc.com" style="color:#a8d8b9;text-decoration:underline">jordan@integrityconstructionkc.com</a> with your address and I\'ll put together a quote for you!',
+          true
+        );
+        setTimeout(() => {
+          addJordanMessage("Or just call me anytime at <a href='tel:9709783236' style='color:#a8d8b9;text-decoration:underline'>(970) 978-3236</a>. I pick up! 📞", false);
+        }, 800);
+      }, 1000);
+    } else {
+      showTyping();
+      setTimeout(() => {
+        hideTyping();
+        addJordanMessage("No problem at all! When you're ready, you know where to find me. 😊", true);
+        setTimeout(() => {
+          addJordanMessage(
+            "<a href='tel:9709783236' style='color:#a8d8b9;text-decoration:underline'>(970) 978-3236</a> &bull; <a href='mailto:jordan@integrityconstructionkc.com' style='color:#a8d8b9;text-decoration:underline'>jordan@integrityconstructionkc.com</a>",
+            false
+          );
+        }, 800);
+      }, 800);
+    }
+  }
+
+  // Kick off the conversation
+  function startChat() {
+    setTimeout(() => {
+      showTyping();
+      setTimeout(() => {
+        hideTyping();
+        addJordanMessage("Hey! 👋 I'm Jordan, owner of Integrity Construction KC.", true);
+
+        setTimeout(() => {
+          showTyping();
+          setTimeout(() => {
+            hideTyping();
+            addJordanMessage("Looking for a new fence? I build wood privacy, wrought iron, chain link, picket — you name it.", false);
+
+            setTimeout(() => {
+              showTyping();
+              setTimeout(() => {
+                hideTyping();
+                addJordanMessage("What kind of fence are you thinking about?", false);
+
+                setTimeout(() => {
+                  addButtons(
+                    ['Wood Privacy', 'Chain Link', 'Wrought Iron', 'Picket', 'Not sure yet'],
+                    handleFenceChoice
+                  );
+                }, 400);
+              }, 600);
+            }, 800);
+          }, 1200);
+        }, 600);
+      }, 1500);
+    }, 500);
+  }
+
+  startChat();
+})();
+</script>
+
+</body>
+</html>

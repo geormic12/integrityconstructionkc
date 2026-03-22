@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integrity Construction KC — Instant Fence Pricing</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #1a1a2e;
+    background: #f5f7fa;
+    padding-top: 28px;
+    line-height: 1.6;
+  }
+
+  .version-bar {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: #111; color: #888; font-size: 0.7rem;
+    padding: 0.4rem 1rem; display: flex; gap: 1rem; z-index: 9999;
+    font-family: monospace;
+  }
+  .version-bar a { color: #888; text-decoration: none; }
+  .version-bar a:hover { color: #ccc; }
+  .version-bar a.active { color: #fff; }
+
+  /* Header */
+  .site-header {
+    background: #fff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0.75rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .site-header .logo {
+    display: flex; align-items: center; gap: 0.6rem;
+  }
+  .site-header .logo img {
+    width: 38px; height: 38px; border-radius: 6px; object-fit: cover;
+  }
+  .site-header .logo span {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700; font-size: 1.1rem; color: #1a1a2e;
+  }
+  .site-header a.phone {
+    color: #2563eb; font-weight: 600; text-decoration: none;
+    font-size: 0.9rem;
+  }
+
+  /* Hero */
+  .hero {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+    color: #fff; text-align: center;
+    padding: 4rem 2rem 3rem;
+  }
+  .hero h1 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.8rem; font-weight: 700;
+    margin-bottom: 0.75rem;
+  }
+  .hero h1 span { color: #60a5fa; }
+  .hero p {
+    font-size: 1.15rem; opacity: 0.8;
+    max-width: 500px; margin: 0 auto;
+  }
+
+  /* Disclaimer banner */
+  .disclaimer-banner {
+    background: #fef3c7; border-bottom: 2px solid #f59e0b;
+    padding: 0.6rem 2rem; text-align: center;
+    font-size: 0.85rem; color: #92400e;
+    font-weight: 500;
+  }
+
+  /* Calculator */
+  .calculator-wrap {
+    max-width: 720px; margin: -2rem auto 3rem;
+    position: relative; z-index: 10;
+    padding: 0 1rem;
+  }
+  .calculator {
+    background: #fff;
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+    overflow: hidden;
+  }
+  .calc-step {
+    padding: 2rem 2.5rem;
+    border-bottom: 1px solid #f0f0f5;
+  }
+  .calc-step:last-of-type { border-bottom: none; }
+  .step-label {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600; font-size: 0.8rem;
+    color: #2563eb; text-transform: uppercase;
+    letter-spacing: 0.08em; margin-bottom: 0.5rem;
+  }
+  .step-title {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.25rem; font-weight: 700;
+    color: #1a1a2e; margin-bottom: 1.25rem;
+  }
+
+  /* Fence type radio cards */
+  .fence-types {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 0.75rem;
+  }
+  .fence-type-card {
+    border: 2px solid #e2e8f0;
+    border-radius: 10px; padding: 1rem 0.75rem;
+    text-align: center; cursor: pointer;
+    transition: all 0.15s;
+    position: relative;
+  }
+  .fence-type-card:hover { border-color: #93c5fd; background: #f0f7ff; }
+  .fence-type-card.selected {
+    border-color: #2563eb; background: #eff6ff;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.15);
+  }
+  .fence-type-card input { position: absolute; opacity: 0; }
+  .fence-type-card .ft-icon { font-size: 1.8rem; margin-bottom: 0.3rem; }
+  .fence-type-card .ft-name { font-weight: 600; font-size: 0.85rem; color: #1a1a2e; }
+  .fence-type-card .ft-price { font-size: 0.75rem; color: #64748b; margin-top: 0.15rem; }
+
+  /* Slider */
+  .slider-row {
+    display: flex; align-items: center; gap: 1.5rem;
+  }
+  .slider-row input[type="range"] {
+    flex: 1; accent-color: #2563eb;
+    height: 8px;
+  }
+  .slider-row input[type="number"] {
+    width: 80px; border: 2px solid #e2e8f0;
+    border-radius: 8px; padding: 0.5rem 0.75rem;
+    font-size: 1.1rem; font-weight: 600;
+    text-align: center; font-family: 'Space Grotesk', sans-serif;
+  }
+  .slider-row input[type="number"]:focus {
+    outline: none; border-color: #2563eb;
+  }
+  .slider-row .unit { font-size: 0.85rem; color: #64748b; font-weight: 500; }
+
+  /* Gates */
+  .gates-selector {
+    display: flex; gap: 0.5rem;
+  }
+  .gate-btn {
+    width: 56px; height: 56px;
+    border: 2px solid #e2e8f0; border-radius: 10px;
+    background: #fff; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.3rem; font-weight: 700;
+    color: #1a1a2e;
+    transition: all 0.15s;
+  }
+  .gate-btn:hover { border-color: #93c5fd; }
+  .gate-btn.selected {
+    border-color: #2563eb; background: #eff6ff;
+    color: #2563eb;
+  }
+  .gate-note {
+    font-size: 0.8rem; color: #94a3b8;
+    margin-top: 0.5rem;
+  }
+
+  /* Toggle */
+  .toggle-row {
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .toggle-info h4 { font-size: 1rem; color: #1a1a2e; font-weight: 600; }
+  .toggle-info p { font-size: 0.8rem; color: #94a3b8; }
+  .toggle-switch {
+    position: relative; width: 56px; height: 30px;
+    cursor: pointer;
+  }
+  .toggle-switch input { opacity: 0; width: 0; height: 0; }
+  .toggle-track {
+    position: absolute; inset: 0;
+    background: #e2e8f0; border-radius: 100px;
+    transition: background 0.2s;
+  }
+  .toggle-track::after {
+    content: ''; position: absolute;
+    width: 24px; height: 24px;
+    background: #fff; border-radius: 50%;
+    top: 3px; left: 3px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    transition: transform 0.2s;
+  }
+  .toggle-switch input:checked + .toggle-track {
+    background: #2563eb;
+  }
+  .toggle-switch input:checked + .toggle-track::after {
+    transform: translateX(26px);
+  }
+
+  /* Running total */
+  .total-bar {
+    background: #1a1a2e;
+    padding: 2rem 2.5rem;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .total-left {
+    color: #94a3b8; font-size: 0.85rem;
+  }
+  .total-left .total-amount {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 2.8rem; font-weight: 700;
+    color: #fff; display: block;
+    line-height: 1;
+  }
+  .total-left .total-note {
+    font-size: 0.75rem; color: #64748b;
+    margin-top: 0.3rem;
+  }
+  .btn-quote {
+    background: #2563eb; color: #fff;
+    border: none; border-radius: 10px;
+    padding: 1rem 2rem; font-size: 1.05rem;
+    font-weight: 700; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif;
+    transition: background 0.15s, transform 0.15s;
+  }
+  .btn-quote:hover {
+    background: #1d4ed8; transform: translateY(-1px);
+  }
+
+  /* Quote form (hidden by default) */
+  .quote-form {
+    display: none; padding: 2rem 2.5rem;
+    background: #f8fafc;
+  }
+  .quote-form.visible { display: block; }
+  .quote-form h3 {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 1.2rem; margin-bottom: 1rem;
+  }
+  .form-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem;
+  }
+  .form-grid input, .form-grid textarea {
+    padding: 0.75rem 1rem; border: 2px solid #e2e8f0;
+    border-radius: 8px; font-size: 0.95rem;
+    font-family: 'Inter', sans-serif;
+  }
+  .form-grid input:focus, .form-grid textarea:focus {
+    outline: none; border-color: #2563eb;
+  }
+  .form-grid textarea {
+    grid-column: 1 / -1; min-height: 80px; resize: vertical;
+  }
+  .form-grid .btn-submit {
+    grid-column: 1 / -1;
+    background: #2563eb; color: #fff;
+    border: none; border-radius: 8px;
+    padding: 0.85rem; font-size: 1rem;
+    font-weight: 700; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif;
+  }
+
+  /* Jordan bottom bar */
+  .jordan-bar {
+    max-width: 720px; margin: 0 auto 3rem;
+    padding: 0 1rem;
+  }
+  .jordan-bar-inner {
+    display: flex; align-items: center; gap: 1.25rem;
+    background: #fff; border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .jordan-bar-inner img {
+    width: 64px; height: 64px; border-radius: 50%; object-fit: cover;
+  }
+  .jordan-bar-inner .jb-text {
+    flex: 1;
+  }
+  .jordan-bar-inner .jb-text p {
+    font-size: 0.9rem; color: #64748b;
+  }
+  .jordan-bar-inner .jb-text a {
+    color: #2563eb; font-weight: 700; text-decoration: none;
+    font-size: 1rem;
+  }
+
+  /* Fine print */
+  .fine-print {
+    max-width: 720px; margin: 0 auto 3rem;
+    padding: 0 1rem;
+    text-align: center; font-size: 0.8rem; color: #94a3b8;
+  }
+
+  footer {
+    background: #1a1a2e; color: #64748b;
+    text-align: center; padding: 2rem;
+    font-size: 0.85rem;
+  }
+  footer a { color: #60a5fa; text-decoration: none; }
+
+  @media (max-width: 640px) {
+    .hero h1 { font-size: 2rem; }
+    .fence-types { grid-template-columns: repeat(2, 1fr); }
+    .calc-step { padding: 1.5rem; }
+    .total-bar { padding: 1.5rem; }
+    .total-left .total-amount { font-size: 2.2rem; }
+    .form-grid { grid-template-columns: 1fr; }
+    .slider-row { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="version-bar">
+  <a href="../">All</a>
+  <a href="../v1-owner/">V1</a> <a href="../v2-instant-price/" class="active">V2</a> <a href="../v3-bigbutton/">V3</a>
+  <a href="../v4-portfolio/">V4</a> <a href="../v5-trust/">V5</a> <a href="../v6-family/">V6</a>
+  <a href="../v7-neighborhood/">V7</a> <a href="../v8-minimal/">V8</a> <a href="../v9-chat/">V9</a>
+  <a href="../v10-before-after/">V10</a>
+</nav>
+
+<header class="site-header">
+  <div class="logo">
+    <img src="../../images/logo.jpeg" alt="Integrity Construction KC">
+    <span>Integrity Construction KC</span>
+  </div>
+  <a href="tel:9709783236" class="phone">(970) 978-3236</a>
+</header>
+
+<section class="hero">
+  <h1>Get Your Fence Price <span>in 30 Seconds</span></h1>
+  <p>Select your options below. Jordan will confirm your exact price with a free on-site visit.</p>
+</section>
+
+<div class="disclaimer-banner">
+  Prices are estimates based on typical Kansas City installations. Your exact quote may vary based on terrain, access, and materials.
+</div>
+
+<div class="calculator-wrap">
+  <div class="calculator">
+
+    <div class="calc-step">
+      <div class="step-label">Step 1</div>
+      <div class="step-title">What type of fence?</div>
+      <div class="fence-types" id="fenceTypes">
+        <label class="fence-type-card selected" data-price="28">
+          <input type="radio" name="fenceType" value="privacy" checked>
+          <div class="ft-icon">&#x1f6e1;&#xfe0f;</div>
+          <div class="ft-name">Privacy</div>
+          <div class="ft-price">~$28/ft</div>
+        </label>
+        <label class="fence-type-card" data-price="18">
+          <input type="radio" name="fenceType" value="chainlink">
+          <div class="ft-icon">&#x26d3;&#xfe0f;</div>
+          <div class="ft-name">Chain Link</div>
+          <div class="ft-price">~$18/ft</div>
+        </label>
+        <label class="fence-type-card" data-price="35">
+          <input type="radio" name="fenceType" value="wroughtiron">
+          <div class="ft-icon">&#x2699;&#xfe0f;</div>
+          <div class="ft-name">Wrought Iron</div>
+          <div class="ft-price">~$35/ft</div>
+        </label>
+        <label class="fence-type-card" data-price="24">
+          <input type="radio" name="fenceType" value="picket">
+          <div class="ft-icon">&#x1fab5;</div>
+          <div class="ft-name">Picket</div>
+          <div class="ft-price">~$24/ft</div>
+        </label>
+        <label class="fence-type-card" data-price="0">
+          <input type="radio" name="fenceType" value="specialty">
+          <div class="ft-icon">&#x2728;</div>
+          <div class="ft-name">Specialty</div>
+          <div class="ft-price">Call for quote</div>
+        </label>
+      </div>
+    </div>
+
+    <div class="calc-step">
+      <div class="step-label">Step 2</div>
+      <div class="step-title">How many linear feet?</div>
+      <div class="slider-row">
+        <input type="range" id="feetSlider" min="20" max="500" value="100">
+        <input type="number" id="feetInput" min="20" max="1000" value="100">
+        <span class="unit">ft</span>
+      </div>
+    </div>
+
+    <div class="calc-step">
+      <div class="step-label">Step 3</div>
+      <div class="step-title">How many gates?</div>
+      <div class="gates-selector" id="gatesSelector">
+        <button class="gate-btn selected" data-gates="0">0</button>
+        <button class="gate-btn" data-gates="1">1</button>
+        <button class="gate-btn" data-gates="2">2</button>
+        <button class="gate-btn" data-gates="3">3</button>
+        <button class="gate-btn" data-gates="4">4</button>
+      </div>
+      <div class="gate-note">$200 per gate</div>
+    </div>
+
+    <div class="calc-step">
+      <div class="step-label">Step 4</div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <h4>Need old fence removed?</h4>
+          <p>Adds ~$8/ft for removal &amp; haul-away</p>
+        </div>
+        <label class="toggle-switch">
+          <input type="checkbox" id="removalToggle">
+          <div class="toggle-track"></div>
+        </label>
+      </div>
+    </div>
+
+    <div class="total-bar">
+      <div class="total-left">
+        Estimated Total
+        <span class="total-amount" id="totalDisplay">$2,800</span>
+        <span class="total-note" id="totalBreakdown">100 ft &#xd7; $28/ft</span>
+      </div>
+      <button class="btn-quote" id="quoteBtn">Get Your Exact Quote</button>
+    </div>
+
+    <div class="quote-form" id="quoteForm">
+      <h3>Almost there! How should Jordan reach you?</h3>
+      <div class="form-grid">
+        <input type="text" placeholder="Your Name" required>
+        <input type="tel" placeholder="Phone Number" required>
+        <input type="email" placeholder="Email (optional)" style="grid-column: 1 / -1;">
+        <textarea placeholder="Anything else Jordan should know? (address, timeline, etc.)"></textarea>
+        <button class="btn-submit" type="button">Send to Jordan</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="jordan-bar">
+  <div class="jordan-bar-inner">
+    <img src="../../images/jordan-portrait.png" alt="Jordan Thompson">
+    <div class="jb-text">
+      <p>Questions about pricing? Skip the calculator.</p>
+      <a href="tel:9709783236">Call Jordan: (970) 978-3236</a>
+    </div>
+  </div>
+</div>
+
+<div class="fine-print">
+  <p>Prices are estimates. Jordan will confirm your exact price during a free on-site consultation. No obligation, no pressure.</p>
+</div>
+
+<footer>
+  <p>&copy; 2026 Integrity Construction KC &middot; Kansas City, MO &middot; <a href="mailto:jordan@integrityconstructionkc.com">jordan@integrityconstructionkc.com</a></p>
+</footer>
+
+<script>
+(function() {
+  // State
+  let pricePerFt = 28;
+  let feet = 100;
+  let gates = 0;
+  let removal = false;
+
+  const totalDisplay = document.getElementById('totalDisplay');
+  const totalBreakdown = document.getElementById('totalBreakdown');
+  const feetSlider = document.getElementById('feetSlider');
+  const feetInput = document.getElementById('feetInput');
+  const removalToggle = document.getElementById('removalToggle');
+  const quoteBtn = document.getElementById('quoteBtn');
+  const quoteForm = document.getElementById('quoteForm');
+
+  function updateTotal() {
+    if (pricePerFt === 0) {
+      totalDisplay.textContent = 'Call for Quote';
+      totalBreakdown.textContent = 'Specialty fences require a custom estimate';
+      return;
+    }
+    const fenceCost = pricePerFt * feet;
+    const gateCost = gates * 200;
+    const removalCost = removal ? 8 * feet : 0;
+    const total = fenceCost + gateCost + removalCost;
+
+    totalDisplay.textContent = '$' + total.toLocaleString();
+
+    let parts = [feet + ' ft \u00d7 $' + pricePerFt + '/ft'];
+    if (gateCost > 0) parts.push(gates + ' gate' + (gates > 1 ? 's' : '') + ' ($' + gateCost + ')');
+    if (removalCost > 0) parts.push('removal ($' + removalCost + ')');
+    totalBreakdown.textContent = parts.join(' + ');
+  }
+
+  // Fence type selection
+  document.querySelectorAll('.fence-type-card').forEach(card => {
+    card.addEventListener('click', function() {
+      document.querySelectorAll('.fence-type-card').forEach(c => c.classList.remove('selected'));
+      this.classList.add('selected');
+      pricePerFt = parseInt(this.dataset.price);
+      updateTotal();
+    });
+  });
+
+  // Feet slider <-> input sync
+  feetSlider.addEventListener('input', function() {
+    feet = parseInt(this.value);
+    feetInput.value = feet;
+    updateTotal();
+  });
+  feetInput.addEventListener('input', function() {
+    feet = parseInt(this.value) || 20;
+    if (feet < 20) feet = 20;
+    feetSlider.value = Math.min(feet, 500);
+    updateTotal();
+  });
+
+  // Gates
+  document.querySelectorAll('.gate-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.gate-btn').forEach(b => b.classList.remove('selected'));
+      this.classList.add('selected');
+      gates = parseInt(this.dataset.gates);
+      updateTotal();
+    });
+  });
+
+  // Removal toggle
+  removalToggle.addEventListener('change', function() {
+    removal = this.checked;
+    updateTotal();
+  });
+
+  // Quote button
+  quoteBtn.addEventListener('click', function() {
+    quoteForm.classList.toggle('visible');
+    this.textContent = quoteForm.classList.contains('visible') ? 'Hide Form' : 'Get Your Exact Quote';
+  });
+})();
+</script>
+
+</body>
+</html>

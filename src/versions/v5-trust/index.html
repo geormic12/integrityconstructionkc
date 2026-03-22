@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integrity Construction KC — Trusted by Kansas City Homeowners</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #1a1a1a;
+    background: #fff;
+    padding-top: 28px;
+    line-height: 1.7;
+  }
+
+  /* Version bar */
+  .version-bar {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: #111; color: #888; font-size: 0.7rem;
+    padding: 0.4rem 1rem; display: flex; gap: 1rem; z-index: 9999;
+    font-family: monospace;
+  }
+  .version-bar a { color: #888; text-decoration: none; }
+  .version-bar a:hover { color: #ccc; }
+  .version-bar a.active { color: #fff; }
+
+  /* Header */
+  .site-header {
+    background: #fff;
+    border-bottom: 1px solid #e5e5e5;
+    padding: 1rem 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .logo-area { display: flex; align-items: center; gap: 0.75rem; }
+  .logo-area img { width: 44px; height: 44px; border-radius: 8px; object-fit: cover; }
+  .logo-area span { font-family: 'DM Serif Display', serif; font-size: 1.2rem; color: #1a1a1a; }
+  .header-cta a {
+    background: #2d6a4f; color: #fff; text-decoration: none;
+    padding: 0.6rem 1.4rem; border-radius: 6px; font-weight: 600; font-size: 0.9rem;
+    transition: background 0.2s;
+  }
+  .header-cta a:hover { background: #1b4332; }
+  .header-phone { margin-right: 1.5rem; }
+  .header-phone a { color: #2d6a4f; text-decoration: none; font-weight: 600; font-size: 0.95rem; }
+  .header-right { display: flex; align-items: center; }
+
+  /* Trust banner */
+  .trust-banner {
+    background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+    text-align: center;
+    padding: 3rem 2rem;
+    border-bottom: 3px solid #2d6a4f;
+  }
+  .trust-banner h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2.4rem;
+    color: #1a1a1a;
+    margin-bottom: 0.75rem;
+  }
+  .trust-banner .stars { font-size: 2rem; color: #f59e0b; margin-bottom: 0.5rem; }
+  .trust-banner .rating-text {
+    font-size: 1.1rem; color: #4b5563; font-weight: 500;
+  }
+  .trust-banner .rating-text strong { color: #1a1a1a; font-size: 1.3rem; }
+
+  /* Stats row */
+  .stats-row {
+    display: flex; justify-content: center; gap: 3rem;
+    padding: 2.5rem 2rem;
+    background: #fff;
+    border-bottom: 1px solid #e5e5e5;
+    flex-wrap: wrap;
+  }
+  .stat-item { text-align: center; }
+  .stat-number {
+    font-size: 2rem; font-weight: 800; color: #2d6a4f;
+    display: block; line-height: 1.2;
+  }
+  .stat-label { font-size: 0.85rem; color: #6b7280; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; }
+
+  /* Rating breakdown */
+  .rating-breakdown {
+    max-width: 500px; margin: 0 auto;
+    padding: 2rem 2rem 0;
+  }
+  .rating-breakdown h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.5rem; text-align: center; margin-bottom: 1.5rem;
+  }
+  .rating-bar-row {
+    display: flex; align-items: center; gap: 0.75rem;
+    margin-bottom: 0.5rem; font-size: 0.85rem; color: #6b7280;
+  }
+  .rating-bar-label { width: 50px; text-align: right; font-weight: 600; }
+  .rating-bar-track {
+    flex: 1; height: 10px; background: #e5e7eb; border-radius: 5px; overflow: hidden;
+  }
+  .rating-bar-fill { height: 100%; background: #f59e0b; border-radius: 5px; }
+  .rating-bar-count { width: 20px; }
+
+  /* Testimonials */
+  .testimonials-section {
+    padding: 3rem 2rem 4rem;
+    max-width: 1100px; margin: 0 auto;
+  }
+  .testimonials-section h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem; text-align: center; margin-bottom: 0.5rem;
+  }
+  .testimonials-section .subtitle {
+    text-align: center; color: #6b7280; margin-bottom: 2.5rem; font-size: 1rem;
+  }
+  .testimonials-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+  }
+  .testimonial-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.75rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    transition: box-shadow 0.2s;
+  }
+  .testimonial-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .testimonial-stars { color: #f59e0b; font-size: 1rem; margin-bottom: 0.75rem; }
+  .testimonial-text {
+    font-size: 0.95rem; color: #374151; line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+  .testimonial-author { font-weight: 700; color: #1a1a1a; font-size: 0.9rem; }
+  .testimonial-city { color: #6b7280; font-size: 0.8rem; }
+  .verified-badge {
+    display: inline-flex; align-items: center; gap: 0.3rem;
+    font-size: 0.75rem; color: #2d6a4f; font-weight: 600;
+    margin-top: 0.5rem;
+  }
+  .verified-badge::before { content: "\2713"; }
+
+  /* Owner section */
+  .owner-section {
+    background: #f9fafb;
+    padding: 4rem 2rem;
+    border-top: 1px solid #e5e5e5;
+  }
+  .owner-inner {
+    max-width: 900px; margin: 0 auto;
+    display: flex; gap: 2.5rem; align-items: center;
+    flex-wrap: wrap;
+  }
+  .owner-photo {
+    width: 220px; height: 220px; border-radius: 50%;
+    object-fit: cover; border: 4px solid #2d6a4f;
+    flex-shrink: 0;
+  }
+  .owner-bio { flex: 1; min-width: 280px; }
+  .owner-bio h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem; margin-bottom: 0.5rem;
+  }
+  .owner-bio .title { color: #2d6a4f; font-weight: 600; margin-bottom: 1rem; font-size: 0.95rem; }
+  .owner-bio p { color: #4b5563; font-size: 0.95rem; margin-bottom: 0.75rem; }
+  .owner-bio .ethos {
+    font-style: italic; font-size: 1.05rem; color: #1a1a1a;
+    border-left: 3px solid #2d6a4f; padding-left: 1rem;
+    margin-top: 1rem;
+  }
+
+  /* Services */
+  .services-section {
+    padding: 3rem 2rem;
+    max-width: 900px; margin: 0 auto;
+  }
+  .services-section h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 1.6rem; text-align: center; margin-bottom: 2rem;
+  }
+  .services-list {
+    display: flex; flex-wrap: wrap; justify-content: center;
+    gap: 0.75rem; list-style: none;
+  }
+  .services-list li {
+    background: #f0fdf4; border: 1px solid #bbf7d0;
+    padding: 0.6rem 1.4rem; border-radius: 100px;
+    font-size: 0.9rem; font-weight: 500; color: #166534;
+  }
+
+  /* CTA */
+  .cta-section {
+    background: #2d6a4f;
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+  .cta-section h2 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 2rem; color: #fff; margin-bottom: 0.75rem;
+  }
+  .cta-section p { color: #a7f3d0; font-size: 1rem; margin-bottom: 2rem; }
+  .cta-btn {
+    display: inline-block;
+    background: #fff; color: #2d6a4f;
+    padding: 1rem 2.5rem; border-radius: 8px;
+    font-size: 1.1rem; font-weight: 700;
+    text-decoration: none;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .cta-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,0.2); }
+  .cta-phone {
+    display: block; margin-top: 1rem;
+    color: #d1fae5; font-size: 1.3rem; font-weight: 700;
+    text-decoration: none;
+  }
+
+  /* Footer */
+  .site-footer {
+    background: #111; color: #9ca3af;
+    text-align: center; padding: 2rem;
+    font-size: 0.85rem;
+  }
+  .site-footer a { color: #9ca3af; }
+
+  /* Gallery strip */
+  .gallery-strip {
+    display: flex; overflow: hidden; gap: 0;
+    border-top: 1px solid #e5e5e5;
+  }
+  .gallery-strip img {
+    width: calc(100% / 6); height: 160px;
+    object-fit: cover; display: block;
+  }
+
+  @media (max-width: 768px) {
+    .trust-banner h1 { font-size: 1.7rem; }
+    .stats-row { gap: 1.5rem; }
+    .stat-number { font-size: 1.5rem; }
+    .testimonials-grid { grid-template-columns: 1fr; }
+    .owner-inner { flex-direction: column; text-align: center; }
+    .owner-photo { width: 160px; height: 160px; margin: 0 auto; }
+    .owner-bio .ethos { text-align: left; }
+    .gallery-strip img { width: calc(100% / 3); }
+    .site-header { flex-direction: column; gap: 0.75rem; }
+    .header-right { flex-direction: column; gap: 0.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="version-bar">
+  <a href="../">All</a>
+  <a href="../v1-owner/">V1</a> <a href="../v2-instant-price/">V2</a> <a href="../v3-bigbutton/">V3</a>
+  <a href="../v4-portfolio/">V4</a> <a href="../v5-trust/" class="active">V5</a> <a href="../v6-family/">V6</a>
+  <a href="../v7-neighborhood/">V7</a> <a href="../v8-minimal/">V8</a> <a href="../v9-chat/">V9</a>
+  <a href="../v10-before-after/">V10</a>
+</nav>
+
+<header class="site-header">
+  <div class="logo-area">
+    <img src="../../images/logo.jpeg" alt="Integrity Construction KC">
+    <span>Integrity Construction KC</span>
+  </div>
+  <div class="header-right">
+    <div class="header-phone"><a href="tel:9709783236">(970) 978-3236</a></div>
+    <div class="header-cta"><a href="mailto:jordan@integrityconstructionkc.com">Get Free Quote</a></div>
+  </div>
+</header>
+
+<section class="trust-banner">
+  <div class="stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+  <h1>As Reviewed By Happy Homeowners</h1>
+  <p class="rating-text"><strong>4.9</strong> out of 5 based on 7 reviews</p>
+</section>
+
+<div class="stats-row">
+  <div class="stat-item">
+    <span class="stat-number">3+</span>
+    <span class="stat-label">Years in KC</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number">100+</span>
+    <span class="stat-label">Fences Built</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number">4.9</span>
+    <span class="stat-label">Star Rating</span>
+  </div>
+  <div class="stat-item">
+    <span class="stat-number">Family</span>
+    <span class="stat-label">Owned &amp; Operated</span>
+  </div>
+</div>
+
+<div class="rating-breakdown">
+  <h2>Rating Breakdown</h2>
+  <div class="rating-bar-row">
+    <span class="rating-bar-label">5 star</span>
+    <div class="rating-bar-track"><div class="rating-bar-fill" style="width:86%"></div></div>
+    <span class="rating-bar-count">6</span>
+  </div>
+  <div class="rating-bar-row">
+    <span class="rating-bar-label">4 star</span>
+    <div class="rating-bar-track"><div class="rating-bar-fill" style="width:14%"></div></div>
+    <span class="rating-bar-count">1</span>
+  </div>
+  <div class="rating-bar-row">
+    <span class="rating-bar-label">3 star</span>
+    <div class="rating-bar-track"><div class="rating-bar-fill" style="width:0%"></div></div>
+    <span class="rating-bar-count">0</span>
+  </div>
+  <div class="rating-bar-row">
+    <span class="rating-bar-label">2 star</span>
+    <div class="rating-bar-track"><div class="rating-bar-fill" style="width:0%"></div></div>
+    <span class="rating-bar-count">0</span>
+  </div>
+  <div class="rating-bar-row">
+    <span class="rating-bar-label">1 star</span>
+    <div class="rating-bar-track"><div class="rating-bar-fill" style="width:0%"></div></div>
+    <span class="rating-bar-count">0</span>
+  </div>
+</div>
+
+<section class="testimonials-section">
+  <h2>What Our Customers Say</h2>
+  <p class="subtitle">Real reviews from real Kansas City homeowners</p>
+
+  <div class="testimonials-grid">
+    <div class="testimonial-card">
+      <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="testimonial-text">"Jordan, and team did amazing work getting fences installed on two properties this week. They were extremely professional, attentive to the details, and mindful of creating an end result that matched met all of my expectations. Great experience!"</p>
+      <div class="testimonial-author">Matt B.</div>
+      <div class="testimonial-city">Kansas City</div>
+      <div class="verified-badge">Verified Customer</div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="testimonial-text">"Jordan's team was efficient, respectful, and finished the project ahead of time! I have recommended them to several friends & will continue to do so. Very happy with the outcome & service."</p>
+      <div class="testimonial-author">Caitlin B.</div>
+      <div class="testimonial-city">Kansas City</div>
+      <div class="verified-badge">Verified Customer</div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="testimonial-text">"Jordan is a great Craftsman of fences. He quickly remedied the spacing issue we had with the gate. Great company!"</p>
+      <div class="testimonial-author">Jeremy H.</div>
+      <div class="testimonial-city">Kansas City</div>
+      <div class="verified-badge">Verified Customer</div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="testimonial-text">"Jordan and Omar are excellent in communicating with the house owner to install the steel fence in the best possible manner. Very professional and courteous."</p>
+      <div class="testimonial-author">Hao Z.</div>
+      <div class="testimonial-city">Kansas City</div>
+      <div class="verified-badge">Verified Customer</div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="testimonial-text">"Jordan created my dream backyard."</p>
+      <div class="testimonial-author">Michael</div>
+      <div class="testimonial-city">Raytown</div>
+      <div class="verified-badge">Verified Customer</div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="testimonial-text">"Professional and they got it done when they said they would. Highly Recommend."</p>
+      <div class="testimonial-author">James</div>
+      <div class="testimonial-city">Overland Park</div>
+      <div class="verified-badge">Verified Customer</div>
+    </div>
+
+    <div class="testimonial-card">
+      <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="testimonial-text">"My deck looks awesome!!! So much better."</p>
+      <div class="testimonial-author">Jill</div>
+      <div class="testimonial-city">Raymore</div>
+      <div class="verified-badge">Verified Customer</div>
+    </div>
+  </div>
+</section>
+
+<div class="gallery-strip">
+  <img src="../../images/gallery-01.jpg" alt="Fence project">
+  <img src="../../images/gallery-02.jpg" alt="Fence project">
+  <img src="../../images/gallery-03.jpg" alt="Fence project">
+  <img src="../../images/gallery-04.jpg" alt="Fence project">
+  <img src="../../images/gallery-05.jpg" alt="Fence project">
+  <img src="../../images/gallery-06.jpg" alt="Fence project">
+</div>
+
+<section class="owner-section">
+  <div class="owner-inner">
+    <img src="../../images/jordan-portrait.png" alt="Jordan Thompson" class="owner-photo">
+    <div class="owner-bio">
+      <h2>Meet Jordan Thompson</h2>
+      <div class="title">Owner, Integrity Construction KC</div>
+      <p>Jordan started Integrity Construction KC over three years ago with a simple promise: do excellent work and keep your word. As a family man and KC local, he treats every project like it's his own backyard.</p>
+      <p>Every estimate, every project plan, and every post-install walkthrough goes through Jordan personally. When you hire Integrity, you're working directly with the owner.</p>
+      <div class="ethos">"We do what we say we will do, by when we say we're going to do it."</div>
+    </div>
+  </div>
+</section>
+
+<section class="services-section">
+  <h2>Our Services</h2>
+  <ul class="services-list">
+    <li>Wood Privacy Fencing</li>
+    <li>Wrought Iron Fencing</li>
+    <li>Chain Link Fencing</li>
+    <li>Spaced Picket Fencing</li>
+    <li>Specialty Fencing</li>
+    <li>Fence Repairs</li>
+    <li>Deck Building</li>
+  </ul>
+</section>
+
+<section class="cta-section">
+  <h2>Join Our Happy Customers</h2>
+  <p>Get your free, no-pressure quote from Jordan today.</p>
+  <a href="mailto:jordan@integrityconstructionkc.com" class="cta-btn">Get Your Free Quote</a>
+  <a href="tel:9709783236" class="cta-phone">(970) 978-3236</a>
+</section>
+
+<footer class="site-footer">
+  <p>&copy; 2025 Integrity Construction KC. Family Owned in Kansas City, MO.</p>
+  <p><a href="mailto:jordan@integrityconstructionkc.com">jordan@integrityconstructionkc.com</a></p>
+</footer>
+
+</body>
+</html>

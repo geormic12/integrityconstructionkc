@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Integrity Construction KC — See the Difference</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: #fff;
+    color: #1a1a1a;
+    padding-top: 28px;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Version bar */
+  .version-bar {
+    position: fixed; top: 0; left: 0; right: 0;
+    background: #111; color: #888;
+    font-size: 0.7rem; padding: 0.4rem 1rem;
+    display: flex; gap: 1rem; z-index: 9999;
+    font-family: monospace;
+  }
+  .version-bar a { color: #888; text-decoration: none; }
+  .version-bar a:hover { color: #ccc; }
+  .version-bar a[href="../v10-before-after/"] { color: #fff; }
+
+  /* Hero */
+  .hero {
+    text-align: center;
+    padding: 80px 24px 60px;
+    background: linear-gradient(180deg, #f8f8f8 0%, #fff 100%);
+  }
+
+  .hero-badge {
+    display: inline-block;
+    background: #2D5F3F;
+    color: #fff;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 6px 16px;
+    border-radius: 20px;
+    margin-bottom: 24px;
+  }
+
+  .hero h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 16px;
+    letter-spacing: -0.02em;
+  }
+
+  .hero p {
+    font-size: 1.1rem;
+    color: #666;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Comparison sections */
+  .comparisons {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px 24px 60px;
+  }
+
+  .comparison-section {
+    margin-bottom: 64px;
+  }
+
+  .comparison-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #2D5F3F;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 16px;
+  }
+
+  /* Before/After slider */
+  .ba-slider {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+    border-radius: 12px;
+    cursor: col-resize;
+    user-select: none;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.1);
+  }
+
+  .ba-slider img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+  }
+
+  .ba-slider .before-img {
+    filter: grayscale(100%) brightness(0.65) contrast(0.9);
+    z-index: 1;
+  }
+
+  .ba-slider .after-img {
+    z-index: 2;
+    clip-path: inset(0 0 0 50%);
+  }
+
+  .ba-slider .slider-line {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: #fff;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    box-shadow: 0 0 8px rgba(0,0,0,0.3);
+  }
+
+  .ba-slider .slider-handle {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 44px;
+    height: 44px;
+    background: #fff;
+    border-radius: 50%;
+    z-index: 11;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .slider-handle svg {
+    width: 20px;
+    height: 20px;
+    fill: #333;
+  }
+
+  .ba-slider .label-overlay {
+    position: absolute;
+    bottom: 16px;
+    z-index: 5;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: #fff;
+    background: rgba(0,0,0,0.55);
+    padding: 5px 14px;
+    border-radius: 4px;
+    backdrop-filter: blur(4px);
+  }
+
+  .ba-slider .label-before {
+    left: 16px;
+    z-index: 3;
+  }
+
+  .ba-slider .label-after {
+    right: 16px;
+    z-index: 12;
+  }
+
+  /* Demo note */
+  .demo-note {
+    text-align: center;
+    font-size: 0.8rem;
+    color: #999;
+    font-style: italic;
+    margin: 40px 24px 0;
+    padding: 16px;
+    border: 1px dashed #ddd;
+    border-radius: 8px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  /* Testimonials */
+  .testimonials {
+    background: #f8f8f8;
+    padding: 80px 24px;
+  }
+
+  .testimonials h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 48px;
+    letter-spacing: -0.01em;
+  }
+
+  .testimonials-grid {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+  }
+
+  .testimonial-card {
+    background: #fff;
+    padding: 28px;
+    border-radius: 12px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+  }
+
+  .testimonial-stars {
+    color: #F5A623;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+  }
+
+  .testimonial-text {
+    font-size: 0.92rem;
+    line-height: 1.65;
+    color: #444;
+    margin-bottom: 16px;
+  }
+
+  .testimonial-author {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #1a1a1a;
+  }
+
+  .testimonial-location {
+    font-size: 0.75rem;
+    color: #999;
+  }
+
+  /* Services */
+  .services {
+    padding: 80px 24px;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .services h2 {
+    text-align: center;
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin-bottom: 48px;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .service-card {
+    border: 1px solid #e8e8e8;
+    border-radius: 12px;
+    padding: 28px 24px;
+    text-align: center;
+    transition: all 0.25s ease;
+  }
+
+  .service-card:hover {
+    border-color: #2D5F3F;
+    box-shadow: 0 4px 16px rgba(45,95,63,0.1);
+    transform: translateY(-2px);
+  }
+
+  .service-icon {
+    font-size: 2rem;
+    margin-bottom: 12px;
+  }
+
+  .service-card h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .service-price {
+    font-size: 0.85rem;
+    color: #2D5F3F;
+    font-weight: 600;
+  }
+
+  /* CTA section */
+  .cta-section {
+    background: #1a1a1a;
+    color: #fff;
+    padding: 80px 24px;
+    text-align: center;
+  }
+
+  .cta-content {
+    max-width: 600px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .cta-avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid #2D5F3F;
+  }
+
+  .cta-section h2 {
+    font-size: 1.6rem;
+    font-weight: 700;
+  }
+
+  .cta-section p {
+    color: #aaa;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  .cta-section .quote-text {
+    font-style: italic;
+    color: #ccc;
+    font-size: 0.95rem;
+    border-left: 3px solid #2D5F3F;
+    padding-left: 16px;
+    text-align: left;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 14px 36px;
+    background: #2D5F3F;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: background 0.2s;
+  }
+
+  .btn-primary:hover { background: #3a7a52; }
+
+  .btn-secondary {
+    display: inline-block;
+    padding: 14px 36px;
+    border: 1.5px solid #555;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: 500;
+    font-size: 0.95rem;
+    transition: all 0.2s;
+  }
+
+  .btn-secondary:hover { border-color: #fff; }
+
+  /* Footer */
+  .footer {
+    background: #111;
+    color: #666;
+    padding: 24px;
+    text-align: center;
+    font-size: 0.78rem;
+  }
+
+  .footer a { color: #888; text-decoration: none; }
+  .footer a:hover { color: #fff; }
+
+  @media (max-width: 600px) {
+    .hero { padding: 48px 16px 40px; }
+    .comparisons { padding: 20px 16px 40px; }
+    .ba-slider { aspect-ratio: 4 / 3; }
+    .cta-buttons { flex-direction: column; width: 100%; }
+    .btn-primary, .btn-secondary { width: 100%; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="version-bar">
+  <a href="../">All</a>
+  <a href="../v1-owner/">V1</a> <a href="../v2-instant-price/">V2</a> <a href="../v3-bigbutton/">V3</a>
+  <a href="../v4-portfolio/">V4</a> <a href="../v5-trust/">V5</a> <a href="../v6-family/">V6</a>
+  <a href="../v7-neighborhood/">V7</a> <a href="../v8-minimal/">V8</a> <a href="../v9-chat/">V9</a>
+  <a href="../v10-before-after/">V10</a>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge">Integrity Construction KC</div>
+  <h1>See the Difference<br>a New Fence Makes</h1>
+  <p>Drag the slider to reveal the transformation. Quality fencing changes everything about your property.</p>
+</section>
+
+<!-- Before/After Comparisons -->
+<section class="comparisons">
+
+  <div class="comparison-section">
+    <div class="comparison-label">Backyard Privacy Fence</div>
+    <div class="ba-slider" data-image="../../images/backyard-fence.jpeg">
+      <img src="../../images/backyard-fence.jpeg" alt="Before" class="before-img">
+      <img src="../../images/backyard-fence.jpeg" alt="After" class="after-img">
+      <span class="label-overlay label-before">BEFORE</span>
+      <span class="label-overlay label-after">AFTER</span>
+      <div class="slider-line"></div>
+      <div class="slider-handle">
+        <svg viewBox="0 0 24 24"><path d="M8 5l-5 7 5 7M16 5l5 7-5 7" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison-section">
+    <div class="comparison-label">Wrought Iron Installation</div>
+    <div class="ba-slider" data-image="../../images/wrought-iron.jpeg">
+      <img src="../../images/wrought-iron.jpeg" alt="Before" class="before-img">
+      <img src="../../images/wrought-iron.jpeg" alt="After" class="after-img">
+      <span class="label-overlay label-before">BEFORE</span>
+      <span class="label-overlay label-after">AFTER</span>
+      <div class="slider-line"></div>
+      <div class="slider-handle">
+        <svg viewBox="0 0 24 24"><path d="M8 5l-5 7 5 7M16 5l5 7-5 7" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison-section">
+    <div class="comparison-label">Wood Fence Craftsmanship</div>
+    <div class="ba-slider" data-image="../../images/gallery-01.jpg">
+      <img src="../../images/gallery-01.jpg" alt="Before" class="before-img">
+      <img src="../../images/gallery-01.jpg" alt="After" class="after-img">
+      <span class="label-overlay label-before">BEFORE</span>
+      <span class="label-overlay label-after">AFTER</span>
+      <div class="slider-line"></div>
+      <div class="slider-handle">
+        <svg viewBox="0 0 24 24"><path d="M8 5l-5 7 5 7M16 5l5 7-5 7" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="comparison-section">
+    <div class="comparison-label">Chain Link Fencing</div>
+    <div class="ba-slider" data-image="../../images/chain-link.jpg">
+      <img src="../../images/chain-link.jpg" alt="Before" class="before-img">
+      <img src="../../images/chain-link.jpg" alt="After" class="after-img">
+      <span class="label-overlay label-before">BEFORE</span>
+      <span class="label-overlay label-after">AFTER</span>
+      <div class="slider-line"></div>
+      <div class="slider-handle">
+        <svg viewBox="0 0 24 24"><path d="M8 5l-5 7 5 7M16 5l5 7-5 7" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-note">
+    Actual before/after photos coming soon — these demonstrate the comparison feature.
+    The "before" side uses a desaturated filter to simulate the worn/old state.
+  </div>
+</section>
+
+<!-- Testimonials -->
+<section class="testimonials">
+  <h2>What Homeowners Say</h2>
+  <div class="testimonials-grid">
+    <div class="testimonial-card">
+      <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="testimonial-text">"Jordan and his crew were incredible. Showed up on time, finished when they said they would, and the fence looks amazing. Exactly what integrity means."</p>
+      <div class="testimonial-author">Marcus & Lisa R.</div>
+      <div class="testimonial-location">Overland Park, KS</div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="testimonial-text">"Our backyard went from 'meh' to magazine-worthy. The privacy fence completely transformed our outdoor space. Can't recommend them enough."</p>
+      <div class="testimonial-author">Sarah T.</div>
+      <div class="testimonial-location">Lee's Summit, MO</div>
+    </div>
+    <div class="testimonial-card">
+      <div class="testimonial-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+      <p class="testimonial-text">"Got three quotes. Jordan was the most honest about what we actually needed. Fair price, great work, zero surprises. That's rare."</p>
+      <div class="testimonial-author">David K.</div>
+      <div class="testimonial-location">Kansas City, MO</div>
+    </div>
+  </div>
+</section>
+
+<!-- Services -->
+<section class="services">
+  <h2>Our Fencing Services</h2>
+  <div class="services-grid">
+    <div class="service-card">
+      <div class="service-icon">&#9612;</div>
+      <h3>Wood Privacy</h3>
+      <div class="service-price">~$28/ft installed</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">&#9783;</div>
+      <h3>Wrought Iron</h3>
+      <div class="service-price">~$35/ft installed</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">&#9674;</div>
+      <h3>Chain Link</h3>
+      <div class="service-price">~$18/ft installed</div>
+    </div>
+    <div class="service-card">
+      <div class="service-icon">&#9615;</div>
+      <h3>Spaced Picket</h3>
+      <div class="service-price">~$24/ft installed</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-content">
+    <img src="../../images/jordan-portrait.png" alt="Jordan Thompson" class="cta-avatar">
+    <h2>Ready to Transform Your Yard?</h2>
+    <p class="quote-text">"We do what we say we will do, by when we say we're going to do it."</p>
+    <p>Jordan Thompson &bull; Owner, Integrity Construction KC</p>
+    <div class="cta-buttons">
+      <a href="tel:9709783236" class="btn-primary">Call (970) 978-3236</a>
+      <a href="mailto:jordan@integrityconstructionkc.com" class="btn-secondary">Email Jordan</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  &copy; 2026 Integrity Construction KC &bull; Kansas City, MO &bull;
+  <a href="tel:9709783236">(970) 978-3236</a>
+</footer>
+
+<script>
+(function() {
+  document.querySelectorAll('.ba-slider').forEach(slider => {
+    const afterImg = slider.querySelector('.after-img');
+    const line = slider.querySelector('.slider-line');
+    const handle = slider.querySelector('.slider-handle');
+    let isDragging = false;
+
+    function setPosition(x) {
+      const rect = slider.getBoundingClientRect();
+      let percent = ((x - rect.left) / rect.width) * 100;
+      percent = Math.max(2, Math.min(98, percent));
+
+      afterImg.style.clipPath = `inset(0 0 0 ${percent}%)`;
+      line.style.left = percent + '%';
+      handle.style.left = percent + '%';
+    }
+
+    slider.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      setPosition(e.clientX);
+      e.preventDefault();
+    });
+
+    document.addEventListener('mousemove', (e) => {
+      if (!isDragging) return;
+      setPosition(e.clientX);
+    });
+
+    document.addEventListener('mouseup', () => {
+      isDragging = false;
+    });
+
+    // Touch support
+    slider.addEventListener('touchstart', (e) => {
+      isDragging = true;
+      setPosition(e.touches[0].clientX);
+    }, { passive: true });
+
+    document.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      setPosition(e.touches[0].clientX);
+    }, { passive: true });
+
+    document.addEventListener('touchend', () => {
+      isDragging = false;
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
