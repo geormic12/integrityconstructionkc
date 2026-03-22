@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{{ pageTitle or title }}{% if pageTitle %} — {{ site.title }}{% endif %}</title>
+  <meta name="description" content="{{ description or site.description }}">
+  <meta property="og:title" content="{{ pageTitle or title }} — {{ site.title }}">
+  <meta property="og:description" content="{{ description or site.description }}">
+  <meta property="og:type" content="website">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "{{ site.title }}",
+    "description": "{{ site.description }}",
+    "url": "{{ site.url }}",
+    "telephone": "{{ site.phone }}",
+    "email": "{{ site.email }}",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Kansas City",
+      "addressRegion": "MO",
+      "addressCountry": "US"
+    },
+    "areaServed": ["Kansas City", "Overland Park", "Olathe", "Lee's Summit", "Raytown", "Raymore", "Shawnee", "Lenexa"],
+    "priceRange": "$$"
+  }
+  </script>
+
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ site.googleAdsId }}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', '{{ site.googleAdsId }}');
+  </script>
+
+  <link rel="stylesheet" href="{{ pathPrefix }}css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=Open+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="{{ pathPrefix }}" class="logo">
+        <img src="{{ pathPrefix }}images/logo.jpeg" alt="Integrity Construction KC logo" class="logo-img">
+      </a>
+      <nav class="main-nav">
+        <button class="nav-toggle" aria-label="Toggle navigation" onclick="this.classList.toggle('open');document.querySelector('.nav-links').classList.toggle('open');">
+          <span></span><span></span><span></span>
+        </button>
+        <ul class="nav-links">
+          <li class="has-dropdown">
+            <span class="dropdown-toggle">Fence Types</span>
+            <ul class="dropdown">
+              <li><a href="{{ pathPrefix }}fence-types/wood-privacy/">Wood Privacy</a></li>
+              <li><a href="{{ pathPrefix }}fence-types/wrought-iron/">Wrought Iron</a></li>
+              <li><a href="{{ pathPrefix }}fence-types/chain-link/">Chain Link</a></li>
+              <li><a href="{{ pathPrefix }}fence-types/spaced-picket/">Spaced Picket</a></li>
+              <li><a href="{{ pathPrefix }}fence-types/specialty/">Specialty Styles</a></li>
+            </ul>
+          </li>
+          <li><a href="{{ pathPrefix }}fence-repairs/">Fence Repairs</a></li>
+          <li><a href="{{ pathPrefix }}about/">About Us</a></li>
+          <li><a href="{{ pathPrefix }}contact/">Contact Us</a></li>
+          <li><a href="{{ pathPrefix }}projects/">Our Projects</a></li>
+          <li><a href="{{ pathPrefix }}get-quote/" class="nav-cta">Get A Quote</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    {{ content | safe }}
+  </main>
+
+  <footer class="site-footer">
+    <div class="footer-inner">
+      <div class="footer-brand">
+        <img src="{{ pathPrefix }}images/logo.jpeg" alt="Integrity Construction KC" class="footer-logo">
+        <p class="footer-tagline">{{ site.values }}</p>
+      </div>
+      <div class="footer-contact">
+        <a href="mailto:{{ site.email }}">{{ site.email }}</a>
+        <a href="tel:{{ site.phonePlain }}">{{ site.phone }}</a>
+        <p>{{ site.location }}</p>
+      </div>
+      <div class="footer-cta">
+        <a href="{{ pathPrefix }}get-quote/" class="btn btn-primary">Get A Quote</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; {{ site.title }}. All rights reserved.</p>
+    </div>
+  </footer>
+</body>
+</html>
