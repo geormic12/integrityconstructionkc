@@ -5,28 +5,31 @@ description: "Family-owned fencing company serving the Greater Kansas City area.
 permalink: /
 ---
 
-<section class="hero" style="background-image: url('{{ pathPrefix }}images/hero-comparison.png');">
-  <div class="hero-overlay">
-    <div class="hero-content">
-      <h1>Beauty. Privacy. Protection. Perfected.</h1>
-      <a href="{{ pathPrefix }}get-quote/" class="btn btn-primary">Get A Free Quote</a>
-    </div>
+<section class="hero">
+  <div class="hero-content">
+    <h1>Beauty. Privacy. Protection. Perfected.</h1>
   </div>
 </section>
 
 <section class="intro">
   <div class="container">
     <div class="intro-grid">
+      <div class="intro-image">
+        <img src="{{ pathPrefix }}images/hero-comparison.png" alt="Comparison of four different wooden fences in various residential yards">
+      </div>
       <div class="intro-text">
         <h2>We build beautiful, functional fences that last.</h2>
         <p>Integrity Construction KC is a family owned and operated fencing business serving the Greater Kansas City area.</p>
         <p>Whether you're shopping for a stylish picture-frame cedar, or a chain link perimeter to keep your pets safe, our experienced builder has you covered.</p>
         <a href="{{ pathPrefix }}get-quote/" class="btn btn-primary">Get A Quote</a>
       </div>
-      <div class="intro-image">
-        <img src="{{ pathPrefix }}images/backyard-fence.jpeg" alt="Beautiful backyard fence installed by Integrity Construction KC" loading="lazy">
-      </div>
     </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <img src="{{ pathPrefix }}images/backyard-fence.jpeg" alt="Beautiful backyard fence installed by Integrity Construction KC" loading="lazy" style="width:100%; border-radius: var(--radius-lg);">
   </div>
 </section>
 
