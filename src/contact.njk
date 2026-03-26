@@ -26,8 +26,16 @@ permalink: /contact-us/
       </div>
       <div class="contact-form-wrap">
         <h2>Send Us a Message</h2>
-        <p class="form-note"><em>This is a static website. For immediate assistance, please call or email us directly.</em></p>
-        <form class="contact-form" onsubmit="event.preventDefault(); alert('Thank you for your message. Please call or email us directly for the fastest response.');">
+        <div id="thank-you" style="display:none; background: #e8f5e9; border: 1px solid #4caf50; border-radius: 8px; padding: 24px; margin-bottom: 32px; text-align: center;">
+          <h3 style="color: #2e7d32; margin-bottom: 8px;">Thank you for your message!</h3>
+          <p>We'll get back to you as soon as possible.</p>
+        </div>
+        <script>if(window.location.search.includes('thanks=1')){document.getElementById('thank-you').style.display='block';}</script>
+        <form class="contact-form" action="https://formsubmit.co/Jordan@IntegrityConstructionKC.com" method="POST">
+          <input type="hidden" name="_subject" value="New Contact Message from IntegrityConstructionKC.com">
+          <input type="hidden" name="_next" value="{{ site.url }}/contact-us/?thanks=1">
+          <input type="text" name="_honey" style="display:none">
+          <input type="hidden" name="_captcha" value="false">
           <div class="form-group">
             <label for="contact-name">Name <span class="required">*</span></label>
             <input type="text" id="contact-name" name="name" required>

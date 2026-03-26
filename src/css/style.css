@@ -918,6 +918,10 @@ p:last-child {
   box-shadow: var(--shadow);
 }
 
+.content-section {
+  padding: 60px 24px 80px;
+}
+
 .form-group {
   margin-bottom: 20px;
 }
