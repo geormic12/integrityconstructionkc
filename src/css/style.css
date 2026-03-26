@@ -807,6 +807,7 @@ p:last-child {
   font-size: 0.95rem;
   line-height: 1.7;
   margin-bottom: 1.25rem;
+  padding-top: 2rem;
   position: relative;
   z-index: 1;
 }
@@ -1199,6 +1200,19 @@ p:last-child {
 
 .cta-banner .btn {
   margin: 0 8px;
+}
+
+/* ==========================================================================
+   CTA SECTION (homepage bottom)
+   ========================================================================== */
+.cta-section {
+  text-align: center;
+  padding: 80px 24px;
+  background-color: var(--color-surface);
+}
+
+.cta-section h2 {
+  margin-bottom: 1.5rem;
 }
 
 /* ==========================================================================
